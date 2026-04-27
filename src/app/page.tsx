@@ -4,6 +4,7 @@ import Vision from "@/src/components/Vision";
 import Objectif from "@/src/components/Objectif";
 import PiliersSection from "@/src/components/PilierSection";
 import ImpactSecteion from "@/src/components/ImpactSection";
+import TestimonialSection from "@/src/components/TestimonialSection";
 
 export default function Home() {
   return (
@@ -14,6 +15,7 @@ export default function Home() {
       <Objectif />
       <PiliersSection />
       <ImpactSecteion />
+      <TestimonialSection />
     </main>
   );
 }

@@ -29,7 +29,7 @@ export default function Hero() {
         {/* Image */}
         <div className="relative w-full h-[400px]">
           <Image
-            src="/hero.jpg" // mets ton image ici
+            src="/assets/images/" 
             alt="Hero"
             fill
             className="object-cover rounded-lg"
