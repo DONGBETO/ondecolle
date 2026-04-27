@@ -3,6 +3,7 @@ import Hero from "@/src/components/Hero";
 import Vision from "@/src/components/Vision";
 import Objectif from "@/src/components/Objectif";
 import PiliersSection from "@/src/components/PilierSection";
+import ImpactSecteion from "@/src/components/ImpactSection";
 
 export default function Home() {
   return (
@@ -12,6 +13,7 @@ export default function Home() {
       <Vision />
       <Objectif />
       <PiliersSection />
+      <ImpactSecteion />
     </main>
   );
 }
