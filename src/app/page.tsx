@@ -14,10 +14,36 @@ import { FaFacebook } from "react-icons/fa";
 
 export default function Home() {
   return (
+    <>
     <main>
       <Navbar />
-      <Hero />
-      <Vision />
+      <Hero
+        text=""
+        title="ENSEMBLE, ON DÉCOLLE !"
+        subtitle="Dans la discipline, la rigueur, la détermination et la foi."
+        description="Parce que chaque rêve mérite une piste d’envol, nous aidons gratuitement les jeunes à transformer leurs idées en projets concrets, durables et financés."
+        buttonText="DEVENIR PARTENAIRE"
+        image="/assets/images/hero_image_home.jpg"
+      />      
+      <Vision 
+        title="NOTRE VISION"
+        image="/assets/images/photo-densemble-vision.jpg"
+        paragraphs={
+          <>
+            <p>
+              Nous croyons qu’un jeune encadré, formé et soutenu peut devenir une
+              source de croissance, d’emploi et d’inspiration pour son pays.
+            </p>
+
+            <p>
+              <span className="font-semibold text-blue-900">
+                Notre vision :
+              </span>{" "}
+              détecter, accompagner et propulser la jeunesse africaine vers le succès.
+            </p>
+          </>
+        }
+      />
       <Objectif />
       <PiliersSection />
       <ImpactSecteion />
@@ -40,5 +66,6 @@ export default function Home() {
         ]}
       />
     </main>
+  </>
   );
 }

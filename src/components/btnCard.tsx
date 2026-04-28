@@ -1,11 +1,41 @@
 export function BtnCard({
-text
+  text,
 }: {
   text: string;
 }) {
   return (
-    <div className="bg-yellow-400 text-black px-6 py-3 rounded-full font-semibold hover:bg-yellow-300 transition mt-16">
-      <button className="text-gray-800 text-sm leading-relaxed cursor-pointer">{text}</button>
+    <div className="">
+      <button
+        className="
+          bg-yellow-400 
+          text-gray-800 
+          font-semibold 
+          rounded-full
+          md:rounded-full 
+          sm:rounded-md
+          cursor-pointer
+          
+          px-4 py-2 
+          sm:px-3 sm:py-2.5 
+          md:px-6 md:py-3
+          
+          text-sm 
+          sm:text-base 
+          md:text-md
+          
+          hover:bg-yellow-300 
+          transition
+          
+          mt-10 sm:mt-12 md:mt-16
+          mb-12 sm:mb-16 md:mb-20
+
+          active:scale-95
+
+          shadow-md hover:shadow-lg
+        "
+      >
+        {text}
+      </button>
     </div>
   );
 }

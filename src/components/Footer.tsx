@@ -25,7 +25,7 @@ export default function Footer({
   socials,
 }: Props) {
   return (
-    <footer className="bg-[#1f2a5a] text-white pt-16 pb-8 mt-8">
+    <footer className="bg-[#1f2a5a] text-white pt-16 pb-8">
       <div className="max-w-7xl mx-auto px-4 md:px-8">
         
         <div className="grid md:grid-cols-3 gap-10 mb-12">
@@ -33,7 +33,7 @@ export default function Footer({
           {/* Logo + desc */}
           <div>
             <div className="flex items-center gap-3 mb-2">
-              <Image src={logo} alt="logo" width={250} height={250} className="-mx-8 -mt-12 md:-mx-8 md:-mt-12"/>
+                <a href="#"><Image src={logo} alt="logo" width={250} height={250} className="-mx-8 -mt-12 md:-mx-8 md:-mt-12"/></a>
             </div>
 
             <p className="text-gray-300 text-sm mb-4">
@@ -67,7 +67,7 @@ export default function Footer({
 
           {/* Contact */}
           <div>
-            <h3 className="font-semibold text-lg mb-4">
+            <h3 className="text-lg mb-4 text-gray-300">
               N'hésitez pas à nous contacter pour discuter de vos projets et découvrir comment nous pouvons vous aider.
             </h3>
 
