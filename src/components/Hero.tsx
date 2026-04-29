@@ -18,7 +18,7 @@ export default function Hero({
   image="",
 }: Props) {
   return (
-    <section className="relative h-[80vh] flex items-center justify-center text-center text-white">
+    <section className="relative h-[90vh] flex items-center justify-center text-center text-white">
       
       {/* Background image */}
       <Image
@@ -50,7 +50,7 @@ export default function Hero({
         )}
 
         {description && (
-          <p className="text-gray-200 mb-6">
+          <p className="text-gray-200 mb-6 text-xl max-w-7xl mx-auto">
             {description}
           </p>
         )}
