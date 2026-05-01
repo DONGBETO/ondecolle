@@ -1,6 +1,6 @@
 import Navbar from "@/src/components/Navbar";
 import Hero from "@/src/components/Hero";
-import Projet from "@/src/components/projet";
+import Equipe from "@/src/components/equipe";
 import Contact from "@/src/components/contact";
 import Footer from "@/src/components/Footer";
 import { Music2 } from "lucide-react";
@@ -8,7 +8,7 @@ import { FaLinkedin, FaInstagram } from "react-icons/fa6";
 import { FaFacebook } from "react-icons/fa";
 
 
-export default function About() {
+export default function Contactez() {
   return (
         <main>
           <Navbar />
@@ -22,7 +22,7 @@ export default function About() {
             title="CONTACTS"
             image="/assets/images/hero_image_home.jpg"
           />
-          <Projet />
+          <Equipe />
           <Contact />
           <Footer
             logo="/assets/logos/logoo.png"

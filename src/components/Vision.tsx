@@ -25,7 +25,7 @@ export default function Vision({
             {title}
           </h2>
 
-          <div className="space-y-4 text-gray-700 text-sm md:text-base leading-relaxed">
+          <div className="space-y-4 text-gray-700 text-sm md:text-base leading-relaxed text-justify">
             {paragraphs}
           </div>
 
