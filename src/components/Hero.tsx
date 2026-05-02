@@ -1,12 +1,13 @@
 import Image from "next/image";
 
 type Props = {
-  text: string;
-  title: string;
+  text?: string;
+  title?: string;
   subtitle?: string;
   description?: string;
   buttonText?: string;
   image: string;
+  overlay?: boolean;
 };
 
 export default function Hero({
@@ -16,6 +17,7 @@ export default function Hero({
   description="",
   buttonText="",
   image="",
+  overlay=true
 }: Props) {
   return (
     <section className="relative h-[90vh] flex items-center justify-center text-center text-white">
@@ -29,8 +31,10 @@ export default function Hero({
         priority
       />
 
-      {/* Overlay */}
-      <div className="absolute inset-0 bg-blue-900/80"></div>
+      {/* Overlay conditionnel */}
+      {overlay && (
+        <div className="absolute inset-0 bg-blue-900/80"></div>
+      )}
 
       {/* Content */}
       <div className="relative z-10 max-w-3xl px-4">

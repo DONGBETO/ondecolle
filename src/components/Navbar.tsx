@@ -7,8 +7,8 @@ import { usePathname } from "next/navigation";
 
 
 export default function Navbar() {
-  const [isOpen, setIsOpen] = useState(false);
-  const pathname = usePathname();
+const [isOpen, setIsOpen] = useState(false);
+const pathname = usePathname();
 
 const isActive = (path: string) => pathname === path;
 
@@ -57,7 +57,7 @@ const isActualitesActive = activePaths.some((path) =>
   
             {/* Parent link */}
             <Link
-              href="/blog"
+              href="/actualites/blog"
               className={`cursor-pointer ${
                 isActualitesActive ? "text-blue-800 font-bold" : "hover:text-blue-900"
               }`}
@@ -74,7 +74,7 @@ const isActualitesActive = activePaths.some((path) =>
                   <Link
                     href="/blog"
                     className={`block px-4 py-2 ${
-                      isActive("/blog") ? "bg-gray-200 text-blue-800 font-semibold" : "hover:bg-gray-100 text-blue-900"
+                      isActive("/actualites/blog") ? "bg-gray-200 text-blue-800 font-semibold" : "hover:bg-gray-100 text-blue-900"
                     }`}
                   >
                     Blog
@@ -85,7 +85,7 @@ const isActualitesActive = activePaths.some((path) =>
                   <Link
                     href="/evenements"
                     className={`block px-4 py-2 ${
-                      isActive("/evenements") ? "bg-gray-200 text-blue-800 font-semibold" : "hover:bg-gray-100 text-blue-900"
+                      isActive("/actualites/evenements") ? "bg-gray-200 text-blue-800 font-semibold" : "hover:bg-gray-100 text-blue-900"
                     }`}
                   >
                     Évènements
@@ -94,9 +94,9 @@ const isActualitesActive = activePaths.some((path) =>
 
                 <li>
                   <Link
-                    href="/bibliotheque"
+                    href="/actualites/bibliotheque"
                     className={`block px-4 py-2 ${
-                      isActive("/bibliotheque") ? "bg-gray-200 text-blue-800 font-semibold" : "hover:bg-gray-100 text-blue-900"
+                      isActive("/actualites/bibliotheque") ? "bg-gray-200 text-blue-800 font-semibold" : "hover:bg-gray-100 text-blue-900"
                     }`}
                   >
                     Bibliothèque

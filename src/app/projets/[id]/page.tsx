@@ -1,28 +1,38 @@
+import { notFound } from "next/navigation";
 import Navbar from "@/src/components/Navbar";
 import Hero from "@/src/components/Hero";
-import Projets from "@/src/components/Projets";
+import ProjetDetail from "@/src/components/projetDetail";
+import { projects } from "@/src/data/project";
 import Footer from "@/src/components/Footer";
 import { Music2 } from "lucide-react";
 import { FaLinkedin, FaInstagram } from "react-icons/fa6";
 import { FaFacebook } from "react-icons/fa";
 
 
-export default function Projet() {
+export default async function Projet({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+
+const { id } = await params;
+const projet = projects.find((p) => p.id === id);
+
+if (!projet) return notFound();
+
   return (
         <main>
           <Navbar />
           <Hero 
-            subtitle=""
-            text=""
-            description="Ensemble, on décolle est un mouvement citoyen en pleine croissance, un écosystème
-            où chaque acteur joue un rôle clé dans la transformation de la jeunesse africaine. Que vous
-            soyez un jeune avec un rêve, un expert souhaitant partager son savoir, ou une entité
-            désireuse d’investir dans un avenir prometteur, votre place est à nos côtés."
-            title="PROJETS"
-            image="/assets/images/hero_image_home.jpg"
+            title={projet.title}
+            image={projet.image || "/assets/images/hero_image_home.jpg"}
+            overlay={true}
           />
-          <Projets />
-          <Footer
+        <ProjetDetail 
+          title={projet.title}
+          description={projet.description}
+        />
+        <Footer
             logo="/assets/logos/logoo.png"
             description="Notre mission : détecter, accompagner et propulser la jeunesse africaine vers le succès."
             links={[
