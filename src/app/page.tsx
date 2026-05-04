@@ -4,6 +4,7 @@ import Vision from "@/src/components/Vision";
 import Objectif from "@/src/components/Objectif";
 import PiliersSection from "@/src/components/PilierSection";
 import ImpactSecteion from "@/src/components/ImpactSection";
+import VideoSection from "@/src/components/videoSection";
 import TestimonialSection from "@/src/components/TestimonialSection";
 import Footer from "@/src/components/Footer";
 import { Music2 } from "lucide-react";
@@ -47,6 +48,7 @@ export default function Home() {
       <Objectif />
       <PiliersSection />
       <ImpactSecteion />
+      <VideoSection />
       <TestimonialSection />
       <Footer
         logo="/assets/logos/logoo.png"
