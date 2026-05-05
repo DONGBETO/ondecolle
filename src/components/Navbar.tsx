@@ -72,7 +72,7 @@ const isActualitesActive = activePaths.some((path) =>
                 
                 <li>
                   <Link
-                    href="/blog"
+                    href="/actualites/blog"
                     className={`block px-4 py-2 ${
                       isActive("/actualites/blog") ? "bg-gray-200 text-blue-800 font-semibold" : "hover:bg-gray-100 text-blue-900"
                     }`}
@@ -83,7 +83,7 @@ const isActualitesActive = activePaths.some((path) =>
 
                 <li>
                   <Link
-                    href="/evenements"
+                    href="/actualites/evenements"
                     className={`block px-4 py-2 ${
                       isActive("/actualites/evenements") ? "bg-gray-200 text-blue-800 font-semibold" : "hover:bg-gray-100 text-blue-900"
                     }`}

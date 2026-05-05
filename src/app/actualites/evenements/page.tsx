@@ -1,6 +1,7 @@
 import Navbar from "@/src/components/Navbar";
 import Hero from "@/src/components/Hero";
-import BiblioText from "@/src/components/biblio";
+import Event from "@/src/components/event";
+import EventSection from "@/src/components/eventSection"
 import Footer from "@/src/components/Footer";
 import { Music2 } from "lucide-react";
 import { FaLinkedin, FaInstagram } from "react-icons/fa6";
@@ -15,24 +16,26 @@ export default function Projet() {
             subtitle=""
             text=""
             description=""
-            title="Notre bibliothèque de ressources"
+            title="Nos évènements"
             image="/assets/images/hero_image_home.jpg"
           />
-          <BiblioText
-            title="Des ressources pour tous les besoins"
+          <Event
+            title="Découvrez nos évènements"
             paragraph = {
               <>
                 <p>
-                  Développez vos compétences, enrichissez vos connaissances et prenez votre avenir en
-                  main grâce à la nouvelle <span className="font-bold text-blue-900">Bibliothèque Gratuite ! </span> Pensée comme un véritable accélérateur
-                  de potentiel, cette plateforme vous donne un accès illimité à des outils, des études de
-                  cas, des formations concises et des guides pratiques. De l’idéation au financement, en
-                  passant par le développement personnel, trouvez les réponses à vos questions et les
-                  ressources pour vous autonomiser. Il est temps de construire votre savoir, gratuitement.
+                  Nos événements sont des espaces de rencontre, d’apprentissage et d’opportunités.
+                  À travers des conférences, des ateliers pratiques et des sessions de mentorat,
+                  nous créons un environnement dynamique où les jeunes peuvent développer leurs
+                  compétences, élargir leur réseau et concrétiser leurs ambitions. Chaque événement
+                  est conçu pour <span className="text-blue-900">inspirer, former et connecter</span>,
+                  afin de transformer des idées en projets
+                  réels et durables.
                 </p>
               </>
             } 
           />
+          <EventSection />
           <Footer
             logo="/assets/logos/logoo.png"
             description="Notre mission : détecter, accompagner et propulser la jeunesse africaine vers le succès."

@@ -17,7 +17,6 @@ export default function BiblioText({ title, paragraph }: Props) {
                 </div>
             </div>
         </section>
-
         <section className="bg-gray-100 py-16 sm:py-20">
               <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         
