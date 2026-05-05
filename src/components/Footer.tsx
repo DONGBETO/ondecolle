@@ -52,7 +52,7 @@ export default function Footer({
 
           {/* Menu */}
           <div>
-            <h3 className="font-semibold text-lg mb-4">Menu</h3>
+            <h3 className="font-semibold text-lg mb-4">Menus</h3>
 
             <ul className="space-y-2 text-gray-300 text-sm">
               {links.map((link, index) => (
