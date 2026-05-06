@@ -21,7 +21,7 @@ export default function EventCard({
   return (
     <div className="group relative rounded-xl overflow-hidden shadow-lg">
 
-      <div className="relative w-full h-[420px]">
+      <div className="relative w-full h-[420]">
         <Image
           src={image}
           alt={title}

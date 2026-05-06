@@ -9,6 +9,30 @@ import { FaLinkedin, FaInstagram } from "react-icons/fa6";
 import { FaFacebook } from "react-icons/fa";
 
 
+export async function generateStaticParams() {
+  return events.map((event) => ({
+    slug: event.slug,
+  }));
+}
+
+export function generateMetadata({ params }: Props) {
+  const event = events.find((e) => e.slug === params.slug);
+
+  if (!event) return {};
+
+  return {
+    title: event.title,
+    description: event.description,
+  };
+}
+
+type Props = {
+  params: {
+    slug: string;
+  };
+};
+
+
 export default async function EventDetailPage({
   params,
 }: {
