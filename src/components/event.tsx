@@ -1,5 +1,3 @@
-import EventCard from "./eventCard";
-
 type Props = {
     title: string;
     paragraph: React.ReactNode;
