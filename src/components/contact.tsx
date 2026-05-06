@@ -1,11 +1,88 @@
 "use client";
+
 import { useState } from "react";
 import CustomSelect from "./departement";
 import CustomSelectAdresse from "./residence";
 import AutoTextarea from "./textarea";
 
 export default function ContactSection() {
-const [value, setValue] = useState("");
+  const [form, setForm] = useState({
+    prenoms: "",
+    nom: "",
+    email: "",
+    objet: "",
+    message: "",
+    pays: "",
+    departement: "",
+    isInBenin: "",
+  });
+
+  const [errors, setErrors] = useState<any>({});
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+
+  const handleChange = (e: any) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const validate = () => {
+    let newErrors: any = {};
+
+    if (!form.prenoms) newErrors.prenoms = "Prénoms requis";
+    if (!form.nom) newErrors.nom = "Nom requis";
+    if (!form.email.includes("@")) newErrors.email = "Email invalide";
+    if (!form.objet) newErrors.objet = "Objet requis";
+    if (!form.message) newErrors.message = "Message requis";
+
+    if (form.isInBenin === "oui" && !form.departement) {
+      newErrors.departement = "Département requis";
+    }
+
+    if (form.isInBenin === "non" && !form.pays) {
+      newErrors.pays = "Pays requis";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async (e: any) => {
+    e.preventDefault();
+
+    if (!validate()) return;
+
+    try {
+      setLoading(true);
+
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(form),
+      });
+
+      if (res.ok) {
+        setSuccess(true);
+        setForm({
+          prenoms: "",
+          nom: "",
+          email: "",
+          objet: "",
+          message: "",
+          pays: "",
+          departement: "",
+          isInBenin: "",
+        });
+      }
+
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <section className="bg-white py-16 sm:py-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row gap-10">
@@ -39,60 +116,109 @@ const [value, setValue] = useState("");
         {/* RIGHT - Formulaire */}
         <div className="w-full lg:w-[60%] bg-white rounded-xl shadow-lg p-6 sm:p-8">
 
-          <form className="space-y-5">
+          <form onSubmit={handleSubmit} className="space-y-5">
 
             {/* Prénoms */}
-            {/* <label className="text-sm font-medium text-gray-400">Prénoms</label> */}
-              <input
-                type="text"
-                placeholder="Prénoms"
-                className="w-full border placeholder:text-gray-400 border-gray-300 rounded-md px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900"
-              />
+            <input
+              name="prenoms"
+              value={form.prenoms}
+              onChange={handleChange}
+              placeholder="Prénoms"
+              className="w-full border placeholder:text-gray-400 border-gray-300 rounded-md px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900"
+            />
+            {errors.prenoms && <p className="text-red-500 text-sm">{errors.prenoms}</p>}
+
             {/* Nom */}
-            {/* <label className="text-sm font-medium text-gray-400">Nom</label> */}
-              <input
-                type="text"
-                placeholder="Nom"
-                className="w-full border placeholder:text-gray-400 border-gray-300 rounded-md px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900"
-              />
+            <input
+              name="nom"
+              value={form.nom}
+              onChange={handleChange}
+              placeholder="Nom"
+              className="w-full border placeholder:text-gray-400 border-gray-300 rounded-md px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900"
+            />
+            {errors.nom && <p className="text-red-500 text-sm">{errors.nom}</p>}
 
             {/* Email */}
-            {/* <label className="text-sm font-medium text-gray-400">Email</label> */}
             <input
-              type="email"
+              name="email"
+              value={form.email}
+              onChange={handleChange}
               placeholder="adresse@gmail.com"
               className="w-full border placeholder:text-gray-400 border-gray-300 rounded-md px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900"
             />
+            {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
 
             {/* Adresse */}
             <CustomSelectAdresse />
 
-            {/* Département  */}
-            <CustomSelect />
+            {/* Question */}
+            <div>
+              <label className="text-sm text-gray-500">Êtes-vous au Bénin ?</label>
+              <select
+                name="isInBenin"
+                value={form.isInBenin}
+                onChange={handleChange}
+                className="w-full border border-gray-300 rounded-md px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900"
+              >
+                <option value="">-- Choisir --</option>
+                <option value="oui">Oui</option>
+                <option value="non">Non</option>
+              </select>
+            </div>
 
-            <input
-              type="text"
-              placeholder="Pays de résidence"
-              className="w-full border placeholder:text-gray-400 border-gray-300 rounded-md px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900"
-            />
+            {/* Condition */}
+            {form.isInBenin === "oui" && (
+              <>
+                <CustomSelect />
+                {errors.departement && <p className="text-red-500 text-sm">{errors.departement}</p>}
+              </>
+            )}
+
+            {form.isInBenin === "non" && (
+              <>
+                <input
+                  name="pays"
+                  value={form.pays}
+                  onChange={handleChange}
+                  placeholder="Pays de résidence"
+                  className="w-full border placeholder:text-gray-400 border-gray-300 rounded-md px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900"
+                />
+                {errors.pays && <p className="text-red-500 text-sm">{errors.pays}</p>}
+              </>
+            )}
 
             {/* Objet */}
             <input
-              type="text"
+              name="objet"
+              value={form.objet}
+              onChange={handleChange}
               placeholder="Objet"
               className="w-full border placeholder:text-gray-400 border-gray-300 rounded-md px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900"
             />
+            {errors.objet && <p className="text-red-500 text-sm">{errors.objet}</p>}
 
             {/* Message */}
-            <AutoTextarea />
+            <textarea
+              name="message"
+              value={form.message}
+              onChange={handleChange}
+              placeholder="Message"
+              className="w-full border placeholder:text-gray-400 border-gray-300 rounded-md px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900"
+            />
+            {errors.message && <p className="text-red-500 text-sm">{errors.message}</p>}
 
             {/* Button */}
             <button
               type="submit"
+              disabled={loading}
               className="bg-yellow-400 text-white px-6 py-2 rounded-md font-semibold hover:bg-yellow-300 transition cursor-pointer active:scale-95 shadow-md hover:shadow-lg"
             >
-              ENVOYER
+              {loading ? "Envoi..." : "ENVOYER"}
             </button>
+
+            {success && (
+              <p className="text-green-600">Message envoyé avec succès</p>
+            )}
 
           </form>
 
