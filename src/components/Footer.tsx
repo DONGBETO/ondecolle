@@ -28,10 +28,10 @@ export default function Footer({
     <footer className="bg-[#1f2a5a] text-white pt-16 pb-8">
       <div className="max-w-7xl mx-auto px-4 md:px-8">
         
-        <div className="grid md:grid-cols-3 gap-10 mb-12">
+        <div className="grid md:grid-cols-3 gap-8 mb-12">
           
           {/* Logo + desc */}
-          <div>
+          <div className="mt-4">
             <div className="flex items-center gap-3 mb-2">
                 <a href="#"><Image src={logo} alt="logo" width={250} height={250} className="-mx-8 -mt-12 md:-mx-8 md:-mt-12"/></a>
             </div>
@@ -51,8 +51,8 @@ export default function Footer({
           </div>
 
           {/* Menu */}
-          <div>
-            <h3 className="font-semibold text-lg mb-4">Menu</h3>
+          <div className="flex flex-col items-center text-center">
+            <h3 className="font-semibold text-lg mb-4">Menus</h3>
 
             <ul className="space-y-2 text-gray-300 text-sm">
               {links.map((link, index) => (

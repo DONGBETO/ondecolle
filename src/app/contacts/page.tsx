@@ -1,6 +1,10 @@
 import Navbar from "@/src/components/Navbar";
 import Hero from "@/src/components/Hero";
+<<<<<<< feature/contact-branch
 // import Equipe from "@/src/components/equipe";
+=======
+import Equipe from "@/src/components/equipe";
+>>>>>>> main
 import Contact from "@/src/components/contact";
 import Footer from "@/src/components/Footer";
 import { Music2 } from "lucide-react";
@@ -22,7 +26,11 @@ export default function Contactez() {
             title="CONTACTS"
             image="/assets/images/hero_image_home.jpg"
           />
+<<<<<<< feature/contact-branch
           {/* <Equipe /> */}
+=======
+          <Equipe />
+>>>>>>> main
           <Contact />
           <Footer
             logo="/assets/logos/logoo.png"

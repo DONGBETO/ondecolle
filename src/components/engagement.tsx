@@ -11,7 +11,7 @@ export default function EngagementSection({
 }: Props) {
   return (
     <section className="bg-gray-100 py-16 sm:py-20 lg:py-24">
-      <div className="max-w-7xl mx-auto px-4 md:px-8 text-center">
+      <div className="max-w-7xl mx-auto px-4 md:px-8 ">
         
         {/* Titre */}
         <h2 className="
@@ -22,6 +22,7 @@ export default function EngagementSection({
           font-bold 
           text-blue-900 
           mb-6 sm:mb-8
+          text-center
         ">
           {title}
         </h2>
@@ -34,6 +35,7 @@ export default function EngagementSection({
           md:text-lg 
           text-gray-700 
           leading-relaxed
+          text-justify
         ">
           {highlight && (
             <span className="font-semibold text-blue-900">
