@@ -148,9 +148,6 @@ export default function ContactSection() {
             />
             {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
 
-            {/* Adresse */}
-            <CustomSelectAdresse />
-
             {/* Question */}
             <div>
               <label className="text-sm text-gray-500">Êtes-vous au Bénin ?</label>
@@ -169,7 +166,12 @@ export default function ContactSection() {
             {/* Condition */}
             {form.isInBenin === "oui" && (
               <>
-                <CustomSelect />
+                <CustomSelect
+                  value={form.departement}
+                  onChange={(value: string) =>
+                    setForm({ ...form, departement: value })
+                  }
+                />
                 {errors.departement && <p className="text-red-500 text-sm">{errors.departement}</p>}
               </>
             )}
