@@ -3,7 +3,7 @@ import Link from "next/link";
 
 type Props = {
   title: string;
-  description: string[];
+  description: string;
   image: string;
   id?: string;
   createdAt?: string;

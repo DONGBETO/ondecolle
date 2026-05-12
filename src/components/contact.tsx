@@ -1,9 +1,15 @@
 "use client";
 
 import { useState } from "react";
+import { motion } from "framer-motion";
+
 import CustomSelect from "./departement";
-import CustomSelectAdresse from "./residence";
 import AutoTextarea from "./textarea";
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 40 },
+  show: { opacity: 1, y: 0 },
+};
 
 export default function ContactSection() {
   const [form, setForm] = useState({
@@ -48,7 +54,6 @@ export default function ContactSection() {
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
-
     if (!validate()) return;
 
     try {
@@ -56,9 +61,7 @@ export default function ContactSection() {
 
       const res = await fetch("/api/contact", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
 
@@ -75,95 +78,110 @@ export default function ContactSection() {
           isInBenin: "",
         });
       }
-
-    } catch (error) {
-      console.log(error);
     } finally {
       setLoading(false);
     }
   };
 
+  const inputClass =
+    "w-full border border-gray-200 rounded-lg px-4 py-3 text-sm outline-none transition focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 bg-white placeholder:text-gray-500";
+
   return (
-    <section className="bg-white py-16 sm:py-20">
+    <section className="bg-white py-16 sm:py-20 overflow-x-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row gap-10">
 
-        {/* LEFT - Infos */}
-        <div className="w-full lg:w-[40%]">
+        {/* LEFT */}
+        <motion.div
+          initial={{ opacity: 0, x: -60 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: false }}
+          transition={{ duration: 0.7 }}
+          className="w-full lg:w-[40%]"
+        >
           <h2 className="text-xl sm:text-2xl font-bold text-blue-900 mb-8">
             CONTACTEZ-NOUS ICI
           </h2>
 
-          <div className="space-y-6 text-gray-700 text-sm sm:text-base">
-            
+          <div className="space-y-6 text-gray-700">
             <div>
-              <h3 className="font-semibold text-blue-900 mb-1">Adresse</h3>
-              <p>Cotonou - Fidjrossè (République du Bénin)</p>
+              <h3 className="font-semibold text-blue-900">Adresse</h3>
+              <p>Cotonou - Fidjrossè (Bénin)</p>
             </div>
 
             <div>
-              <h3 className="font-semibold text-blue-900 mb-1">Email</h3>
+              <h3 className="font-semibold text-blue-900">Email</h3>
               <p>contact@ondecolle.com</p>
             </div>
 
             <div>
-              <h3 className="font-semibold text-blue-900 mb-1">Phone</h3>
+              <h3 className="font-semibold text-blue-900">Phone</h3>
               <p>+229 01 61 93 93 10</p>
             </div>
-
           </div>
-        </div>
+        </motion.div>
 
-        {/* RIGHT - Formulaire */}
-        <div className="w-full lg:w-[60%] bg-white rounded-xl shadow-lg p-6 sm:p-8">
-
+        {/* RIGHT FORM */}
+        <motion.div
+          initial={{ opacity: 0, x: 60 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: false }}
+          transition={{ duration: 0.7 }}
+          className="w-full lg:w-[60%] bg-white rounded-2xl shadow-xl p-6 sm:p-8"
+        >
           <form onSubmit={handleSubmit} className="space-y-5">
 
             {/* Prénoms */}
-            <input
+            <motion.input
+              whileFocus={{ scale: 1.01 }}
               name="prenoms"
               value={form.prenoms}
               onChange={handleChange}
               placeholder="Prénoms"
-              className="w-full border placeholder:text-gray-400 border-gray-300 rounded-md px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900"
+              className={inputClass}
             />
-            {errors.prenoms && <p className="text-red-500 text-sm">{errors.prenoms}</p>}
+            {errors.prenoms && (
+              <p className="text-red-500 text-sm">{errors.prenoms}</p>
+            )}
 
             {/* Nom */}
-            <input
+            <motion.input
+              whileFocus={{ scale: 1.01 }}
               name="nom"
               value={form.nom}
               onChange={handleChange}
               placeholder="Nom"
-              className="w-full border placeholder:text-gray-400 border-gray-300 rounded-md px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900"
+              className={inputClass}
             />
-            {errors.nom && <p className="text-red-500 text-sm">{errors.nom}</p>}
+            {errors.nom && (
+              <p className="text-red-500 text-sm">{errors.nom}</p>
+            )}
 
             {/* Email */}
-            <input
+            <motion.input
+              whileFocus={{ scale: 1.01 }}
               name="email"
               value={form.email}
               onChange={handleChange}
               placeholder="adresse@gmail.com"
-              className="w-full border placeholder:text-gray-400 border-gray-300 rounded-md px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900"
+              className={inputClass}
             />
-            {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
+            {errors.email && (
+              <p className="text-red-500 text-sm">{errors.email}</p>
+            )}
 
-            {/* Question */}
-            <div>
-              <label className="text-sm text-gray-500">Êtes-vous au Bénin ?</label>
-              <select
-                name="isInBenin"
-                value={form.isInBenin}
-                onChange={handleChange}
-                className="w-full border border-gray-300 rounded-md px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900"
-              >
-                <option value="">-- Choisir --</option>
-                <option value="oui">Oui</option>
-                <option value="non">Non</option>
-              </select>
-            </div>
+            {/* BENIN */}
+            <select
+              name="isInBenin"
+              value={form.isInBenin}
+              onChange={handleChange}
+              className={inputClass}
+            >
+            <option value="" className="text-gray-700 hover:bg-blue-900">Êtes-vous au Bénin ?</option>
+            <option value="oui" className="text-gray-700 hover:bg-blue-900">Oui</option>
+            <option value="non" className="text-gray-700 hover:bg-blue-900">Non</option>
+            </select>
 
-            {/* Condition */}
+            {/* CONDITIONAL */}
             {form.isInBenin === "oui" && (
               <>
                 <CustomSelect
@@ -172,7 +190,11 @@ export default function ContactSection() {
                     setForm({ ...form, departement: value })
                   }
                 />
-                {errors.departement && <p className="text-red-500 text-sm">{errors.departement}</p>}
+                {errors.departement && (
+                  <p className="text-red-500 text-sm">
+                    {errors.departement}
+                  </p>
+                )}
               </>
             )}
 
@@ -182,50 +204,59 @@ export default function ContactSection() {
                   name="pays"
                   value={form.pays}
                   onChange={handleChange}
-                  placeholder="Pays de résidence"
-                  className="w-full border placeholder:text-gray-400 border-gray-300 rounded-md px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900"
+                  placeholder="Pays"
+                  className={inputClass}
                 />
-                {errors.pays && <p className="text-red-500 text-sm">{errors.pays}</p>}
+                {errors.pays && (
+                  <p className="text-red-500 text-sm">{errors.pays}</p>
+                )}
               </>
             )}
 
-            {/* Objet */}
+            {/* OBJET */}
             <input
               name="objet"
               value={form.objet}
               onChange={handleChange}
               placeholder="Objet"
-              className="w-full border placeholder:text-gray-400 border-gray-300 rounded-md px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900"
+              className={inputClass}
             />
-            {errors.objet && <p className="text-red-500 text-sm">{errors.objet}</p>}
 
-            {/* Message */}
-            <textarea
+            {/* MESSAGE */}
+            <AutoTextarea
               name="message"
               value={form.message}
               onChange={handleChange}
-              placeholder="Message"
-              className="w-full border placeholder:text-gray-400 border-gray-300 rounded-md px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900"
             />
-            {errors.message && <p className="text-red-500 text-sm">{errors.message}</p>}
 
-            {/* Button */}
-            <button
+            {/* BUTTON */}
+            <motion.button
               type="submit"
               disabled={loading}
-              className="bg-yellow-400 text-white px-6 py-2 rounded-md font-semibold hover:bg-yellow-300 transition cursor-pointer active:scale-95 shadow-md hover:shadow-lg"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="
+                w-full
+                bg-yellow-400
+                text-black
+                py-3
+                rounded-lg
+                font-semibold
+                transition
+                shadow-md
+                hover:shadow-xl
+              "
             >
               {loading ? "Envoi..." : "ENVOYER"}
-            </button>
+            </motion.button>
 
             {success && (
-              <p className="text-green-600">Message envoyé avec succès</p>
+              <p className="text-green-600 text-sm">
+                Message envoyé avec succès
+              </p>
             )}
-
           </form>
-
-        </div>
-
+        </motion.div>
       </div>
     </section>
   );

@@ -20,15 +20,6 @@ return (
         allowFullScreen
       />
     </div>
-
-    <a
-      href="https://www.youtube.com/watch?v=U_Fz2cmtqLQ&si=cJaCfRLfU6EZtt6B"
-      target="_blank"
-      className="inline-block mt-6 bg-red-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-red-700 transition"
-    >
-      Voir sur YouTube
-    </a>
-
   </div>
 </section>
   );

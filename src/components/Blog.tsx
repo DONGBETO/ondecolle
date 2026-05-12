@@ -3,14 +3,15 @@ import BlogCard from "./blogCard";
 import { blogPosts } from "../data/blog";
 
 type Props = {
-  searchParams: { page?: string };
+  page?: string ;
 };
 
 
-export default function Blog({ searchParams }: Props) {
+export default function Blog({ page }: Props) {
+  
   const postsPerPage = 6;
 
-  const currentPage = parseInt(searchParams?.page || "1", 10);
+  const currentPage = parseInt(page || "1", 10);
   
 
   const totalPages = Math.ceil(blogPosts.length / postsPerPage);

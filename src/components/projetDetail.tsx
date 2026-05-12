@@ -2,7 +2,7 @@ import React from "react";
 
 type Props = {
   title: string;
-  description: React.ReactNode;
+  description: string;
   image?: string;
 };
 
@@ -22,7 +22,7 @@ export default function ProjetDetail({ title, description, image }: Props) {
         {title}
       </h1>
 
-      <p className="text-gray-600 mt-4 leading-relaxed space-y-4">
+      <p className="text-gray-600 mt-4 leading-relaxed space-y-4 whitespace-pre-line">
         {description}
       </p>
 
