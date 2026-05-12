@@ -6,6 +6,8 @@ type EventsData = {
     slug: string;
     youtubeId: string;
     content: string;
+    gallery?: string[];
+    statNumber?: number;
 };
 export const events: EventsData[] = [
         {
@@ -21,6 +23,18 @@ export const events: EventsData[] = [
             autour d’échanges stratégiques, de mentorat et
             d’opportunités concrètes.
             `,
+            gallery: [
+          "/assets/images/gallery/event1-1.jfif",
+          "/assets/images/gallery/event1-2.jfif",
+          "/assets/images/gallery/event1-3.jfif",
+          "/assets/images/gallery/event1-4.jfif",         
+          "/assets/images/gallery/event1-5.jfif",
+          "/assets/images/gallery/event1-6.jfif",
+          "/assets/images/gallery/event1-7.jfif",
+          "/assets/images/gallery/event1-8.jfif",
+        ],
+            statNumber: +700,
+
         },
 
       {
@@ -37,6 +51,17 @@ export const events: EventsData[] = [
             de cas inspirantes et d’un environnement propice à l’échange d’idées. Cet événement a contribué
             à stimuler la croissance des entreprises émergentes et à renforcer l’écosystème entrepreneurial local.
             `,
+            gallery: [
+          "/assets/images/gallery/event1-1.jfif",
+          "/assets/images/gallery/event1-2.jfif",
+          "/assets/images/gallery/event1-3.jfif",
+          "/assets/images/gallery/event1-4.jfif",
+          "/assets/images/gallery/event1-5.jfif",
+          "/assets/images/gallery/event1-6.jfif",
+          "/assets/images/gallery/event1-7.jfif",
+          "/assets/images/gallery/event1-8.jfif",
+        ],
+            statNumber: +400,
       },
       {
 
@@ -54,6 +79,18 @@ export const events: EventsData[] = [
             porteurs de projets et les investisseurs, contribuant ainsi à créer un écosystème dynamique
             et propice à la croissance des entreprises innovantes.
             `,
+            gallery: [
+          "/assets/images/gallery/event1-1.jfif",
+          "/assets/images/gallery/event1-2.jfif",
+          "/assets/images/gallery/event1-3.jfif",
+          "/assets/images/gallery/event1-4.jfif",
+          "/assets/images/gallery/event1-5.jfif",
+          "/assets/images/gallery/event1-6.jfif",
+          "/assets/images/gallery/event1-7.jfif",
+          "/assets/images/gallery/event1-8.jfif",
+        ],
+
+          statNumber: +250,
       },
       {
         slug: "rencontre-investisseurs-4",
@@ -70,6 +107,17 @@ export const events: EventsData[] = [
             porteurs de projets et les investisseurs, contribuant ainsi à créer un écosystème dynamique
             et propice à la croissance des entreprises innovantes.
             `,
+        gallery: [
+          "/assets/images/gallery/event1-1.jfif",
+          "/assets/images/gallery/event1-2.jfif",
+          "/assets/images/gallery/event1-3.jfif",
+          "/assets/images/gallery/event1-4.jfif",
+          "/assets/images/gallery/event1-5.jfif",
+          "/assets/images/gallery/event1-6.jfif",
+          "/assets/images/gallery/event1-7.jfif",
+          "/assets/images/gallery/event1-8.jfif",
+        ],
+        statNumber: +1000,
       },
       {
         slug: "conference-uac-habib",
@@ -88,6 +136,17 @@ export const events: EventsData[] = [
         Sous le thème "Jeunesse, ton avenir commence aujourd'hui : ose le bâtir", Habib Aboukhedoud partage 
         son expérience et son expertise pour inspirer et motiver les jeunes à prendre leur destin en main.
         `,
+    gallery: [
+        "/assets/images/gallery/event1-1.jfif",
+        "/assets/images/gallery/event1-2.jfif",
+        "/assets/images/gallery/event1-3.jfif",
+        "/assets/images/gallery/event1-4.jfif",
+        "/assets/images/gallery/event1-5.jfif",
+        "/assets/images/gallery/event1-6.jfif",
+        "/assets/images/gallery/event1-7.jfif",
+        "/assets/images/gallery/event1-8.jfif",
+      ],
+    statNumber: +300,
     },
       {
         slug: "conference-uac-jeunesse",
@@ -111,5 +170,16 @@ export const events: EventsData[] = [
 
         Dans cette conférence inspirante, il aborde les défis auxquels la jeunesse est confrontée et propose des solutions concrètes pour bâtir un avenir meilleur.
         `,
-    },
+    gallery: [
+      "/assets/images/gallery/event1-1.jfif",
+      "/assets/images/gallery/event1-2.jfif",
+      "/assets/images/gallery/event1-3.jfif",
+      "/assets/images/gallery/event1-4.jfif",
+      "/assets/images/gallery/event1-5.jfif",
+      "/assets/images/gallery/event1-6.jfif",
+      "/assets/images/gallery/event1-7.jfif",
+      "/assets/images/gallery/event1-8.jfif",
+    ],
+    statNumber: 3000,
+  },
 ]
