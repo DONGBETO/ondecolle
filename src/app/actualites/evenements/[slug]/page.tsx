@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 import Navbar from "@/src/components/Navbar";
 import Hero from "@/src/components/Hero";
 import EventDetail from "@/src/components/detailEvent";
@@ -15,14 +16,38 @@ export async function generateStaticParams() {
   }));
 }
 
-export function generateMetadata({ params }: Props) {
+export async function generateMetadata({
+  params,
+}: {
+  params: { slug: string };
+}): Promise<Metadata> {
+
   const event = events.find((e) => e.slug === params.slug);
 
-  if (!event) return {};
+  if (!event) {
+    return {
+      title: "Évènement introuvable",
+      description: "Cet évènement n'existe pas.",
+    };
+  }
 
   return {
-    title: event.title,
+    title: `${event.title} | Évènements`,
     description: event.description,
+
+    openGraph: {
+      title: event.title,
+      description: event.description,
+      images: [event.image],
+      type: "article",
+    },
+
+    twitter: {
+      card: "summary_large_image",
+      title: event.title,
+      description: event.description,
+      images: [event.image],
+    },
   };
 }
 
@@ -32,13 +57,12 @@ type Props = {
   };
 };
 
+export const dynamic = "force-static";
 
 export default async function EventDetailPage({
   params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
-  const { slug } = await params;
+}: Props) {
+  const { slug } = params;
 
   const event = events.find((e) => e.slug === slug);
 

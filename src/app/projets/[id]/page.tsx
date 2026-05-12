@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Navbar from "@/src/components/Navbar";
 import Hero from "@/src/components/Hero";
@@ -8,14 +9,47 @@ import { Music2 } from "lucide-react";
 import { FaLinkedin, FaInstagram } from "react-icons/fa6";
 import { FaFacebook } from "react-icons/fa";
 
+type Props = {
+  params: {
+    id: string;
+  };
+};
+
+export function generateMetadata({ params }: Props): Metadata {
+  const projet = projects.find((p) => p.id === params.id);
+
+  if (!projet) {
+    return {
+      title: "Projet introuvable",
+      description: "Ce projet n'existe pas.",
+    };
+  }
+
+  return {
+    title: `${projet.title} | Projets`,
+    description: projet.description,
+
+    openGraph: {
+      title: projet.title,
+      description: projet.description,
+      images: [projet.image || ""],
+    },
+
+    twitter: {
+      card: "summary_large_image",
+      title: projet.title,
+      description: projet.description,
+      images: [projet.image || ""],
+    },
+  };
+}
 
 export default async function Projet({
   params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
+}: Props) {
 
-const { id } = await params;
+const { id } = params;
+
 const projet = projects.find((p) => p.id === id);
 
 if (!projet) return notFound();
