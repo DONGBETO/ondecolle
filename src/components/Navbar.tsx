@@ -1,5 +1,6 @@
 "use client";
 
+import { Menu, X, ChevronUp, ChevronDown } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
@@ -8,15 +9,17 @@ import { usePathname } from "next/navigation";
 
 export default function Navbar() {
 const [isOpen, setIsOpen] = useState(false);
+const [openActualites, setOpenActualites] = useState(false);
 const pathname = usePathname();
 
 const isActive = (path: string) => pathname === path;
 
-const activePaths = ["/blog", "/evenements", "/bibliotheque"];
+const isActualitesActive = pathname.startsWith("/actualites");
 
-const isActualitesActive = activePaths.some((path) =>
-  pathname.startsWith(path)
-);
+const isBlogActive = pathname.startsWith("/actualites/blog");
+const isEvenementsActive = pathname.startsWith("/actualites/evenements");
+const isBibliothequeActive = pathname.startsWith("/actualites/bibliotheque");
+
   return (
     <nav className="bg-yellow-400 relative z-50">
       <div className="max-w-7xl mx-auto px-4 md:px-8 flex items-center justify-between h-20">
@@ -56,14 +59,23 @@ const isActualitesActive = activePaths.some((path) =>
           <li className="relative group">
   
             {/* Parent link */}
-            <Link
-              href="/actualites/blog"
-              className={`cursor-pointer ${
-                isActualitesActive ? "text-blue-800 font-bold" : "hover:text-blue-900"
+          <Link
+            href="/actualites/blog"
+            className={`cursor-pointer flex items-center gap-1 ${
+              isActualitesActive
+                ? "text-blue-800 font-bold"
+                : "hover:text-blue-900"
+            }`}
+          >
+            Actualités
+
+            <ChevronDown
+              size={16}
+              className={`transition-transform duration-300 ${
+                isActualitesActive ? "rotate-180" : ""
               }`}
-            >
-              Actualités ▾
-            </Link>
+            />
+          </Link>
 
             {/* Dropdown */}
             <div className="absolute left-0 top-full mt-2 w-48 bg-white shadow-lg rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
@@ -128,17 +140,98 @@ const isActualitesActive = activePaths.some((path) =>
         </ul>
 
         {/* Mobile */}
-        <button onClick={() => setIsOpen(!isOpen)} className="md:hidden">
-          ☰
-        </button>
+       <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="md:hidden text-blue-900"
+      >
+        {isOpen ? <X size={28} /> : <Menu size={28} />}
+      </button>
       </div>
 
       {isOpen && (
-        <div className="md:hidden px-4 pb-4 space-y-3">
-          <Link href="/" className={isActive("/") ? "font-bold" : ""}>Accueil</Link>
-          <Link href="/about" className={isActive("/about") ? "font-bold" : ""}>À propos</Link>
-          <Link href="/projects" className={isActive("/projects") ? "font-bold" : ""}>Projets</Link>
-          <Link href="/contact" className={isActive("/contact") ? "font-bold" : ""}>Contacts</Link>
+        <div className="fixed inset-0 z-40 bg-black/40 md:hidden">
+          
+          {/* PANEL */}
+          <div className="absolute right-0 top-0 w-72 h-full bg-yellow-400 shadow-2xl p-6 flex flex-col gap-6">
+
+            {/* CLOSE */}
+            <button
+              onClick={() => setIsOpen(false)}
+              className="self-end text-black"
+            >
+              <X size={26} />
+            </button>
+
+            {/* LINKS */}
+            <Link href="/" onClick={() => setIsOpen(false)}
+              className={isActive("/") ? "font-bold text-blue-900" : "text-blue-800"}
+            >
+              Accueil
+            </Link>
+
+            <Link href="/a-propos" onClick={() => setIsOpen(false)}
+              className={isActive("/a-propos") ? "font-bold text-blue-900" : "text-blue-800"}
+            >
+              À propos
+            </Link>
+
+            {/* ACTUALITES */}
+          <div>
+            <button
+              onClick={() => setOpenActualites(!openActualites)}
+              className="font-medium flex justify-between items-center w-full text-blue-900 hover:text-blue-700 transition"
+            >
+              Actualités
+
+              <ChevronDown
+                size={18}
+                className={`transition-transform duration-300 ${
+                  openActualites ? "rotate-180" : ""
+                }`}
+              />
+            </button>
+
+            {openActualites && (
+              <div className="ml-4 mt-2 flex flex-col gap-2">
+
+                <Link
+                  href="/actualites/blog"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Blog
+                </Link>
+
+                <Link
+                  href="/actualites/evenements"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Évènements
+                </Link>
+
+                <Link
+                  href="/actualites/bibliotheque"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Bibliothèque
+                </Link>
+
+              </div>
+            )}
+          </div>
+
+            <Link href="/projets" onClick={() => setIsOpen(false)}
+              className={isActive("/projets") ? "font-bold text-blue-900" : "text-blue-800"}
+            >
+              Projets
+            </Link>
+
+            <Link href="/contacts" onClick={() => setIsOpen(false)}
+              className={isActive("/contacts") ? "font-bold text-blue-900" : "text-blue-800"}
+            >
+              Contacts
+            </Link>
+
+          </div>
         </div>
       )}
     </nav>
