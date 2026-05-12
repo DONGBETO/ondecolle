@@ -49,12 +49,12 @@ export default function AutoTextarea({ name, value, onChange }: Props) {
         rounded-md 
         px-4 py-2 
         text-sm 
-        placeholder:text-gray-500
+        placeholder:text-gray-400
         resize-none
         overflow-hidden
         focus:outline-none 
         focus:ring-2 
-        focus:ring-blue-900
+        focus:ring-yellow-400
         transition-all duration-200
         text-gray-700
       "
