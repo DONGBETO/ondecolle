@@ -1,49 +1,63 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 
-export default function AutoTextarea() {
+type Props = {
+  name: string;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+};
+
+export default function AutoTextarea({ name, value, onChange }: Props) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  const handleInput = () => {
+  const handleResize = () => {
     const el = textareaRef.current;
-    if (el) {
-      el.style.height = "auto";
+    if (!el) return;
 
-      const maxHeight = 200; // 
+    el.style.height = "auto";
 
-      if (el.scrollHeight > maxHeight) {
-        el.style.height = maxHeight + "px";
-        el.style.overflowY = "auto"; 
-      } else {
-        el.style.height = el.scrollHeight + "px";
-        el.style.overflowY = "hidden"; 
-      }
+    const maxHeight = 200;
+
+    if (el.scrollHeight > maxHeight) {
+      el.style.height = maxHeight + "px";
+      el.style.overflowY = "auto";
+    } else {
+      el.style.height = el.scrollHeight + "px";
+      el.style.overflowY = "hidden";
     }
   };
 
+  useEffect(() => {
+    handleResize();
+  }, [value]);
+
   return (
     <textarea
-    ref={textareaRef}
-    onInput={handleInput}
-    placeholder="Soyez précis, concis et plus claire dans votre message."
-    rows={4}
-    className="
+      ref={textareaRef}
+      name={name}
+      value={value}
+      onChange={(e) => {
+        onChange(e);
+        handleResize();
+      }}
+      placeholder="Soyez précis, concis et plus claire dans votre message."
+      rows={4}
+      className="
         w-full 
         border border-gray-300 
         rounded-md 
         px-4 py-2 
         text-sm 
-        placeholder:text-gray-400
+        placeholder:text-gray-500
         resize-none
         overflow-hidden
         focus:outline-none 
         focus:ring-2 
         focus:ring-blue-900
         transition-all duration-200
-        text-gray-600
-        custom-scroll
-    "
+        text-gray-700
+      "
     />
   );
 }
