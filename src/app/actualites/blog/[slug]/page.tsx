@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { blogPosts } from "@/src/data/blog";
 import { notFound } from "next/navigation";
 import Navbar from "@/src/components/Navbar";
@@ -20,19 +21,37 @@ export async function generateStaticParams() {
   }));
 }
 
-export function generateMetadata({ params }: Props) {
+export function generateMetadata({ params }: Props): Metadata {
   const post = blogPosts.find((p) => p.slug === params.slug);
 
-  if (!post) return {};
+  if (!post) {
+    return {
+      title: "Article introuvable",
+      description: "Ce blog n'existe pas.",
+    };
+  }
 
   return {
-    title: post.title,
+    title: `${post.title} | Blog`,
     description: post.description,
+
+    openGraph: {
+      title: post.title,
+      description: post.description,
+      images: [post.image],
+    },
+
+    twitter: {
+      card: "summary_large_image",
+      title: post.title,
+      description: post.description,
+      images: [post.image],
+    },
   };
 }
 
 export default async function BlogDetail({ params }: Props) {
-  const { slug } = await params;
+  const { slug } = params;
 
   const post = blogPosts.find((p) => p.slug === slug);
 
