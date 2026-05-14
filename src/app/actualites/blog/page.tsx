@@ -3,6 +3,8 @@ import Navbar from "@/src/components/Navbar";
 import Hero from "@/src/components/Hero";
 import Blogs from "@/src/components/Blog";
 import Footer from "@/src/components/Footer";
+import BlogContent from '@/src/components/blogContent';
+
 
 import {
   MotionMain,
@@ -18,15 +20,9 @@ const fadeUp = {
   show: { opacity: 1, y: 0 },
 };
 
-type Props = {
-  searchParams: Promise<{
-    page?: string;
-  }>;
-};
 
-export default async function Page({ searchParams }: Props) {
+export default async function Page() {
 
-  const params = await searchParams;
   return (
     <MotionMain className="overflow-x-hidden">
 
@@ -55,7 +51,7 @@ export default async function Page({ searchParams }: Props) {
         viewport={{ once: false, amount: 0.2 }}
         transition={{ duration: 0.8 }}
       >
-      <Blogs page={params?.page} />
+      <BlogContent />
       </MotionSection>
 
       {/* FOOTER */}
