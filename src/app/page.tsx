@@ -108,7 +108,7 @@ export default function Home() {
         whileInView="visible"
         viewport={{ once: false, amount: 0.2 }}
       >
-        <ImpactSecteion />
+      <ImpactSecteion />
       </motion.section>
 
       {/* Video */}
@@ -118,7 +118,7 @@ export default function Home() {
         whileInView="visible"
         viewport={{ once: false, amount: 0.2 }}
       >
-        <VideoSection />
+      <VideoSection />
       </motion.section>
 
       {/* Testimonials */}
@@ -142,11 +142,12 @@ export default function Home() {
           logo="/assets/logos/logoo.png"
           description="Notre mission : détecter, accompagner et propulser la jeunesse africaine vers le succès."
           links={[
-            { label: "Bibliothèque", href: "#" },
-            { label: "Évènements", href: "#" },
-            { label: "Projets", href: "#" },
-            { label: "Contacts", href: "#" },
-            { label: "À propos", href: "#" },
+            { label: "Bibliothèque", href: "/actualites/bibliotheque" },
+            { label: "Évènements", href: "/actualites/evenements" },
+            { label: "Projets", href: "/projets" },
+            { label: "Blog", href: "/actualites/blog" },
+            { label: "Contacts", href: "/contacts" },
+            { label: "À propos", href: "/a-propos" },
           ]}
           socials={[
             {

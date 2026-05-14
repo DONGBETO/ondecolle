@@ -4,7 +4,7 @@ export function BtnCard({
   text: string;
 }) {
   return (
-    <div className="">
+    <div>
       <button
         className="
           bg-yellow-400 
@@ -26,12 +26,13 @@ export function BtnCard({
           hover:bg-yellow-300 
           transition
           
-          mt-10 sm:mt-12 md:mt-16
-          mb-12 sm:mb-16 md:mb-20
+          mt-2 sm:mt-4 md:mt-16
+          mb-2 sm:mb-4 md:mb-20
 
           active:scale-95
 
           shadow-md hover:shadow-lg
+          scale-100 hover:scale-105
         "
       >
         {text}

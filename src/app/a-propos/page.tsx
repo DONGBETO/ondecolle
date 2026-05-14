@@ -205,10 +205,11 @@ export default function About() {
           logo="/assets/logos/logoo.png"
           description="Notre mission : détecter, accompagner et propulser la jeunesse africaine vers le succès."
           links={[
-            { label: "Bibliothèque", href: "#" },
-            { label: "Évènements", href: "#" },
-            { label: "Projets", href: "#" },
-            { label: "Contacts", href: "#" },
+            { label: "Bibliothèque", href: "/actualites/bibliotheque" },
+            { label: "Évènements", href: "/actualites/evenements" },
+            { label: "Projets", href: "/projets" },
+            { label: "Blog", href: "/actualites/blog" },
+            { label: "Contacts", href: "/contacts" },
             { label: "À propos", href: "#" },
           ]}
           socials={[

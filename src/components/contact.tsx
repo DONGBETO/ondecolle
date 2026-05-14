@@ -84,7 +84,7 @@ export default function ContactSection() {
   };
 
   const inputClass =
-    "w-full border border-gray-200 rounded-lg px-4 py-3 text-sm outline-none transition focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 bg-white placeholder:text-gray-300";
+    "w-full border border-gray-200 rounded-lg px-4 py-3 text-sm outline-none transition focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 bg-white placeholder:text-gray-300 text-gray-500";
 
   return (
     <section className="bg-white py-16 sm:py-20 overflow-x-hidden">
@@ -163,7 +163,7 @@ export default function ContactSection() {
               value={form.email}
               onChange={handleChange}
               placeholder="adresse@gmail.com"
-              className="w-full border border-gray-200 rounded-lg px-4 py-3 text-sm outline-none transition focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 bg-white placeholder:text-gray-300"
+              className="w-full border border-gray-200 rounded-lg px-4 py-3 text-sm outline-none transition focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 bg-white placeholder:text-gray-300 text-gray-500"
             />
             {errors.email && (
               <p className="text-red-500 text-sm">{errors.email}</p>

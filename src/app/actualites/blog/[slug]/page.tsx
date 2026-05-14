@@ -96,11 +96,12 @@ export default async function BlogDetail({ params }: Props) {
             logo="/assets/logos/logoo.png"
             description="Notre mission : détecter, accompagner et propulser la jeunesse africaine vers le succès."
             links={[
-                { label: "Bibliothèque", href: "#" },
-                { label: "Évènements", href: "#" },
-                { label: "Projets", href: "#" },
-                { label: "Contacts", href: "#" },
-                { label: "À propos", href: "#" },
+                { label: "Bibliothèque", href: "/actualites/bibliotheque" },
+                { label: "Évènements", href: "/actualites/evenements" },
+                { label: "Projets", href: "/projets" },
+                { label: "Blog", href: "/actualites/blog" },
+                { label: "Contacts", href: "/contacts" },
+                { label: "À propos", href: "/a-propos" },
             ]}
             socials={[
                 { icon: <FaFacebook size={18} />, href: "https://www.facebook.com/habib.aboukhedoud?rdid=Qlwp9rC6zFwqE4bA&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F1BvTBznrbT%2F#", target: "_blank" },

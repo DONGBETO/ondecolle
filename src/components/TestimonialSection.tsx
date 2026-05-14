@@ -83,12 +83,19 @@ export default function TestimonialsSection() {
         </div>
 
         {/* CTA Buttons */}
-        <div className="flex flex-col md:flex-row gap-12 justify-center">       
-            <BtnCard text="SOUMETTRE MON PROJET"/>
-            <BtnCard text="DEVENIR INVESTISSEUR PARTENAIRE"/>
-            <BtnCard text="REJOINDRE LA COMMUNAUTE"/>
-        </div>
+        <div className="flex flex-col md:flex-row gap-4 md:gap-12 justify-center">
+          <div className="self-start md:self-center">
+              <BtnCard text="SOUMETTRE MON PROJET"/>
+          </div>
 
+          <div className="self-start md:self-center">
+              <BtnCard text="DEVENIR INVESTISSEUR PARTENAIRE"/>
+          </div>
+
+          <div className="self-start md:self-center">
+              <BtnCard text="REJOINDRE LA COMMUNAUTE"/>
+          </div>
+        </div>
       </div>
     </section>
   );
