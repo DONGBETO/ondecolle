@@ -4,6 +4,7 @@ import Navbar from "@/src/components/Navbar";
 import Hero from "@/src/components/Hero";
 import Vision from "@/src/components/Vision";
 import Objectif from "@/src/components/Objectif";
+import Partenaire from "../components/partenaire";
 import PiliersSection from "@/src/components/PilierSection";
 import ImpactSecteion from "@/src/components/ImpactSection";
 import VideoSection from "@/src/components/videoSection";
@@ -89,6 +90,16 @@ export default function Home() {
         viewport={{ once: false, amount: 0.2 }}
       >
         <Objectif />
+      </motion.section>
+
+      {/* Partenaires */}
+      <motion.section
+        variants={fadeRight}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: false, amount: 0.2 }}
+      >
+        <Partenaire />
       </motion.section>
 
       {/* Piliers */}

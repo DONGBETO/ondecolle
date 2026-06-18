@@ -19,7 +19,6 @@ export default function About({
   return (
     <section className="bg-gray-100 py-16">
       <div className="max-w-7xl mx-auto px-4 md:px-8 flex flex-col md:flex-row items-center gap-10">
-
         {/* Image */}
         <div className="relative w-full md:w-[30%] h-[300px] md:h-[500px]">
           <Image

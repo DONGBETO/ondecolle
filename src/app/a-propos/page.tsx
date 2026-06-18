@@ -3,6 +3,7 @@
 import Navbar from "@/src/components/Navbar";
 import Hero from "@/src/components/Hero";
 import EngagementSection from "@/src/components/engagement";
+import Partenaires from "@/src/components/partenaire";
 import Vision from "@/src/components/Vision";
 import InitiativeSection from "@/src/components/initiative";
 import Personnalite from "@/src/components/abouts";
@@ -126,6 +127,9 @@ export default function About() {
         />
       </motion.div>
 
+      {/* Partenaires */}
+      <Partenaires />
+
       {/* INITIATIVE */}
       <motion.div
         variants={fadeUp}
@@ -139,6 +143,8 @@ export default function About() {
           description="Ce mouvement est l'émanation de la passion et de la vision du Commandant Habib Aboukhedoud."
         />
       </motion.div>
+
+
 
       {/* PERSONNALITE */}
       <motion.div
@@ -193,6 +199,8 @@ export default function About() {
           }
         />
       </motion.div>
+
+      
 
       {/* FOOTER */}
       <motion.div

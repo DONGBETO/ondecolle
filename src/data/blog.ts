@@ -283,6 +283,113 @@ Enfin, l’action crée des opportunités. En avançant, on rencontre de nouvell
 En conclusion, passer à l’action est le véritable secret de la réussite. Ce n’est pas la perfection qui compte, mais le mouvement. Les idées ne valent rien sans action. C’est en osant commencer, en persévérant et en apprenant de chaque étape que l’on transforme ses rêves en réalité.
     `,
   },
+    {
+    slug: "passeport-pour-tous",
+    title: "PASSEPORT",
+    description:
+      "PASSEPORT : Habib Aboukhedoud expose tout sur le passport; usage de cette pièce",
+    image: "/assets/images/cde.jpeg",
+    date: "03 Février 2023",
+    author: "Habib Aboukhedoud",
+    category: "Engagement",
+    content: `
+Avoir un passeport est d’une utilité capitale pour les voyages à l’étranger notamment par avion. Ainsi, pour son bon usage, il est important de savoir certains détails en rapport avec cette pièce. C’est dans cette optique que le pilote de ligne Habib Aboukhedoud dans l’une de ses publications sur sa page facebook a apporté des explications sur tout ce qu’il faut savoir sur le passeport. Lisez ci-après pour vous informer sur la sécurité à garder, le passeport qu’il vous faut, la possibilité d’avoir deux passeports, le rapport entre passeport et visa et bien d’autres.
+
+Athalie GBAGUIDI (Stg)
+
+JE VOUS EXPLIQUE TOUT SUR LE PASSEPORT
+
+Le passeport, un outil indispensable pour voyager. Je vous explique tout ce que vous devez absolument savoir sur le passeport avant de prendre votre avion pour votre voyage, personnel ou professionnel.
+
+La sécurité avant tout
+
+Cachez votre passeport dans un coffre ou boite cadenassée.
+
+Gardez une photocopie de la page principale sur vous.
+
+Prenez avec vous votre carte d’identité.
+
+Faites attention à qui vous le donnez.
+
+Passeport grand voyageur
+
+En Europe, notamment en France Depuis 2013, le passeport grand voyageur est disponible pour les amoureux de voyages. Il suffit de faire une demande et l’autorité préfectorale décide ensuite de l’accord de ce passeport ou non. Un des avantages : un plus grand nombre de pages (48 au lieu de 32), idéal pour collectionner un maximum de tampons ! (Je ne vous cache pas que tous les 2 ans je renouvelle mon passeport valable 6 ans).
+
+Avoir deux passeports, c’est possible ?
+
+Oui, dans ces 2 cas :
+
+Destinations incompatibles : refus d’entrée sur le territoire si le passeport a le visa d’un Etat « ennemi ». Suite à une demande de visa, immobilisation de passeport alors que vous devez faire un voyage professionnel.
+
+La démarche est la même que pour une demande classique mais des justificatifs sont nécessaires pour prouver que vous êtes dans l’un des deux cas.
+
+Envie d’aller aux USA ?
+
+Visa inutile pour :
+
+Le passeport biométrique Européen (depuis 2009)
+
+Passeport électronique
+
+Visa nécessaire pour :
+
+Le Passeport à lecture optique
+
+Ancien modèle.
+
+Visas et passeports:
+
+Assurer vous que le tampon mis par l’agent de la Police aux Frontières (PAF) ou de l’immigration ne va pas se trouver au milieu d’une page vierge ou demandez à mettre le tampon du visa sur une feuille à part (pour Israël par exemple) car c’est une perte de place pour rien. Vérifiez bien que votre passeport soit encore valide au moins 6 mois après votre entrée sur le territoire afin de ne pas avoir de mauvaises surprises.
+
+Renouvellement:
+
+Dans certains pays, le renouvellement de passeport est gratuit si :
+
+Il est plein
+
+Votre adresse a changé
+
+Vous avez changé de nom ou prénom
+
+Votre passeport est un passeport Delphine à lecture optique et que vous voulez vous rendre aux Etats-Unis sans visa.
+
+Le renouvellement à l’étranger : faire une demande auprès de l’ambassade ou du consulat.
+
+Garder son ancien passeport:
+
+Normalement cela n’est pas possible. Mais lorsque l’agent administratif le coupe afin de le condamner, vous pouvez éventuellement le récupérer. Ou alors dîtes tout simplement que vous l’avez perdu et le tour est joué.
+
+Vol ou perte:
+
+Vol : déclarer le vol auprès d’un commissariat de police.
+
+Perte : déclarer la perte à la mairie et faire une demande de nouveau passeport.
+
+Lorsque cela arrive à l’étranger :
+
+Vol : déclarer le vol aux autorités de police locale et à l’ambassade ou au poste consulaire.
+
+Perte : déclarer la perte à l’ambassade ou au poste consulaire.
+
+Le consulat pourra alors vous donner un laisser passer pour votre retour en France, ou vous en émettre un nouveau.
+
+Protection:
+
+Vous êtes un grand voyageur ? Vous partez en voyage à chaque vacances ? Avec tous ces allers/retours, votre passeport n’a plus très bonne mine. Optez pour une protection.
+
+Le passeport enfant:
+
+Il est valable 5 ans contrairement à celui de l’adulte qui est valable 10 ans.
+
+La demande se fait lorsque l’enfant a 2 mois.
+
+La demande se fait avec la présence d’un responsable légal (un de ses parents).
+
+Cdt. Habib Aboukhedoud  
+
+Pilote de ligne, formateur, je crois en une aviation africaine forte par les jeunes et pour les jeunes, alors démystifions l’aviation dans nos contrées et régions en partageant et en vulgarisant l’aéronautique. 
+    `,
+  },
 ];
 
 export const blogPosts = rawPosts.map((post) => ({

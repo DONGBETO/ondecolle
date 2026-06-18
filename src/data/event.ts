@@ -13,7 +13,7 @@ export const events: EventsData[] = [
         {
             slug: "conference-entrepreneurs",
             title: "Conférence des jeunes entrepreneurs",
-            image: "/assets/images/event1.jpg",
+            image: "/assets/images/event.jpg",
             duration: "2h17",
             description:
             "Une rencontre inspirante autour de l’innovation et de l’entrepreneuriat des jeunes.",
@@ -41,7 +41,7 @@ export const events: EventsData[] = [
         slug: "atelier-formation-business",
         title: "Atelier de formation business",
         description: "Participez à cet atelier de formation pour développer vos compétences en business et apprendre de nouvelles stratégies pour faire croître votre entreprise.",
-        image: "/assets/images/event2.jpg",
+        image: "/assets/images/event.jpg",
         duration: "1h30",
             youtubeId: "dQw4w9WgXcQ",
             content: `
@@ -68,7 +68,7 @@ export const events: EventsData[] = [
         slug: "rencontre-investisseurs-3",
         title: "Rencontre avec investisseurs",
         description: "Rejoignez-nous pour une rencontre avec des investisseurs passionnés qui souhaitent soutenir les projets innovants et les entreprises en développement.",
-        image: "/assets/images/event3.jpg",
+        image: "/assets/images/event.jpg",
         duration: "45min",
             youtubeId: "dQw4w9WgXcQ",
             content: `
@@ -96,7 +96,7 @@ export const events: EventsData[] = [
         slug: "rencontre-investisseurs-4",
         title: "Rencontre avec investisseurs",
         description: "Rejoignez-nous pour une rencontre avec des investisseurs passionnés qui souhaitent soutenir les projets innovants et les entreprises en développement.",
-        image: "/assets/images/event4.jpg",
+        image: "/assets/images/event.jpg",
         duration: "3min",
         youtubeId: "dQw4w9WgXcQ",
             content: `
@@ -122,7 +122,7 @@ export const events: EventsData[] = [
       {
         slug: "conference-uac-habib",
         title: "Rencontre avec Habib Aboukhedoud à l'UAC",
-        image: "/assets/images/event5.jpg",
+        image: "/assets/images/event.jpg",
         duration: "5min:51s",
         description:
         "Une rencontre exceptionnelle entre Habib Aboukhedoud et les jeunes de l’Université d’Abomey-Calavi.",
@@ -153,7 +153,7 @@ export const events: EventsData[] = [
         title:
         "Séance d'échanges du Commandant Habib Aboukhedoud avec la jeunesse béninoise",
 
-        image: "/assets/images/event6.jpg",
+        image: "/assets/images/event.jpg",
         duration: "4min:05s",
 
         description:
@@ -171,14 +171,14 @@ export const events: EventsData[] = [
         Dans cette conférence inspirante, il aborde les défis auxquels la jeunesse est confrontée et propose des solutions concrètes pour bâtir un avenir meilleur.
         `,
     gallery: [
-      "/assets/images/gallery/event1-1.jfif",
-      "/assets/images/gallery/event1-2.jfif",
-      "/assets/images/gallery/event1-3.jfif",
-      "/assets/images/gallery/event1-4.jfif",
-      "/assets/images/gallery/event1-5.jfif",
-      "/assets/images/gallery/event1-6.jfif",
-      "/assets/images/gallery/event1-7.jfif",
-      "/assets/images/gallery/event1-8.jfif",
+      "/assets/images/Calavi/event1.jpg",
+      "/assets/images/Calavi/event2.jpg",
+      "/assets/images/Calavi/event3.jpg",
+      // "/assets/images/gallery/event1-4.jfif",
+      // "/assets/images/gallery/event1-5.jfif",
+      // "/assets/images/gallery/event1-6.jfif",
+      // "/assets/images/gallery/event1-7.jfif",
+      // "/assets/images/gallery/event1-8.jfif",
     ],
     statNumber: 3000,
   },

@@ -169,11 +169,8 @@ export default function EventCard({
           >
             ⏱ {duration}
           </div>
-
         </motion.div>
-
       </div>
-
     </motion.div>
   );
 }

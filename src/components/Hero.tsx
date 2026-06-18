@@ -24,7 +24,7 @@ function Hero({
   overlay = true,
 }: Props) {
   return (
-    <section className="relative h-[90vh] flex items-center justify-center text-center text-white overflow-hidden">
+    <section className="relative min-h-screen flex items-center justify-center text-center text-white overflow-hidden">
 
       {/* Background image animée */}
       <motion.div
@@ -50,7 +50,7 @@ function Hero({
           whileInView={{ opacity: 1 }}
           viewport={{ once: false, amount: 0.3 }}
           transition={{ duration: 1 }}
-          className="absolute inset-0 bg-blue-900/80"
+          className="absolute inset-0 bg-blue-900/60"
         />
       )}
 

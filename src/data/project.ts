@@ -49,7 +49,7 @@ export const projects: Projet[] = [
 
     En réunissant talents, expériences et ressources autour d’une même vision, nous participons à la construction d’une génération capable d’innover, de créer de l’emploi et de contribuer activement au développement de l’Afrique. Grâce à ces connexions stratégiques, nous voulons ouvrir des portes, créer des opportunités durables et permettre à chaque jeune de croire en la possibilité de réussir.
     `,
-    image: "/assets/images/connecter.jpg",
+    image: "/assets/images/azove1.jpg",
     createdAt: "2026-04-20",
   },
   {
@@ -76,7 +76,7 @@ export const projects: Projet[] = [
 
     Propulser la jeunesse, c’est investir dans l’avenir. C’est croire qu’avec les bonnes ressources, le bon accompagnement et une vision claire, chaque jeune peut devenir un acteur du changement et un bâtisseur d’espoir pour les générations futures.
     `,
-    image: "/assets/images/propulser.jpg",
+    image: "/assets/images/porto1.jpg",
     createdAt: "2026-04-20",
   },
   {
@@ -99,7 +99,7 @@ export const projects: Projet[] = [
 
     Notre ambition est de voir émerger une nouvelle génération d’agriculteurs et d’entrepreneurs capables de nourrir leurs communautés, de créer des emplois et de participer activement au développement économique du continent. En investissant dans les talents et les initiatives agricoles des jeunes, nous préparons un avenir plus durable, plus autonome et plus prospère pour l’Afrique.
     `,
-    image: "/assets/images/agriculture.jpg",
+    image: "/assets/images/azove2.jpg",
     createdAt: "2026-04-20",
   },
   {
@@ -122,7 +122,7 @@ export const projects: Projet[] = [
 
     À travers cette initiative, nous cherchons à transformer les idées ambitieuses en entreprises solides, créatrices d’emplois et porteuses d’impact. Car chaque innovation développée aujourd’hui peut devenir une réponse durable aux défis de demain et participer activement à la construction d’une Afrique plus connectée, plus autonome et plus prospère.
     `,
-    image: "/assets/images/startup.jpg",
+    image: "/assets/images/porto2.jpg",
     createdAt: "2026-04-20",
   },
   {
@@ -145,7 +145,31 @@ export const projects: Projet[] = [
 
     Notre ambition est de voir émerger une génération de leaders responsables, compétents et engagés, capables de contribuer activement au développement de l’Afrique. En investissant dans l’éducation aujourd’hui, nous préparons les solutions de demain et donnons à la jeunesse les moyens de construire un avenir meilleur pour elle-même et pour le continent.
     `,
-    image: "/assets/images/education.jpg",
+    image: "/assets/images/calavi1.jpg",
     createdAt: "2026-04-20",
   },
+
+  // {
+  //   id: "equipe",
+  //   title: "Éducation",
+  //   description: `
+  //   Nous investissons dans des projets éducatifs qui visent à renforcer les compétences des jeunes dans les domaines clés du numérique et de l’entrepreneuriat. Grâce à un accompagnement structuré, des mentors expérimentés et des ressources adaptées, ces initiatives permettent aux bénéficiaires de devenir acteurs de leur avenir.
+
+  //   En soutenant des programmes de formation innovants et accessibles, nous contribuons à créer une nouvelle génération de leaders capables de relever les défis du continent et de propulser l’Afrique vers un avenir prospère. En facilitant l’accès à la connaissance et aux opportunités, nous contribuons à bâtir une génération compétente, autonome et prête à relever les défis du futur.
+
+  //   Nous croyons profondément que l’éducation est l’un des piliers les plus puissants du développement personnel, économique et social. Une jeunesse bien formée est capable de transformer son environnement, de créer des opportunités et de participer activement à la construction d’une société plus forte et plus équilibrée.
+
+  //   À travers ce projet, nous encourageons un apprentissage moderne, pratique et orienté vers les réalités actuelles du monde professionnel. Les jeunes bénéficient de formations adaptées aux besoins du marché, leur permettant d’acquérir des compétences concrètes dans des domaines porteurs tels que le numérique, la communication, le leadership, la gestion de projet et l’innovation.
+
+  //   Nous mettons également un accent particulier sur le développement de la créativité, de l’esprit critique et de la capacité à résoudre des problèmes. Notre objectif n’est pas seulement de transmettre des connaissances, mais aussi d’aider les jeunes à développer une véritable mentalité de bâtisseurs et d’innovateurs capables d’avoir un impact durable dans leurs communautés.
+
+  //   Grâce à des ateliers interactifs, des séances de coaching, des conférences et des programmes de mentorat, les participants apprennent à gagner en confiance, à mieux structurer leurs idées et à transformer leurs compétences en opportunités concrètes. Ils sont encouragés à croire en leur potentiel et à poursuivre leurs ambitions avec discipline, détermination et foi.
+
+  //   Nous favorisons également l’accès à des ressources pédagogiques modernes et à des environnements d’apprentissage stimulants afin de permettre à chaque jeune d’évoluer dans les meilleures conditions possibles. En créant des passerelles entre l’éducation, l’entrepreneuriat et l’innovation, nous préparons les jeunes à s’adapter à un monde en constante évolution.
+
+  //   Notre ambition est de voir émerger une génération de leaders responsables, compétents et engagés, capables de contribuer activement au développement de l’Afrique. En investissant dans l’éducation aujourd’hui, nous préparons les solutions de demain et donnons à la jeunesse les moyens de construire un avenir meilleur pour elle-même et pour le continent.
+  //   `,
+  //   image: "/assets/images/education.jpg",
+  //   createdAt: "2026-04-20",
+  // },
 ];
