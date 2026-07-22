@@ -93,31 +93,36 @@ export const events: EventsData[] = [
           statNumber: +250,
       },
       {
-        slug: "rencontre-investisseurs-4",
-        title: "Rencontre avec investisseurs",
-        description: "Rejoignez-nous pour une rencontre avec des investisseurs passionnés qui souhaitent soutenir les projets innovants et les entreprises en développement.",
-        image: "/assets/images/event.jpg",
+        slug: "Rencontre-avec-la-jeunesse",
+        title: "Rencontre avec la jeunesse béninoise",
+        description: "Nouvelle rencontre de Habib Aboukhedoud avec des jeunes à Cotonou : ”Ensemble, on décolle” prend de l’altitude.",
+        image: "/assets/images/11 Juillet/1.jpg",
         duration: "3min",
         youtubeId: "dQw4w9WgXcQ",
             content: `
-            Cette rencontre avec des investisseurs a été une opportunité exceptionnelle pour les jeunes
-            entrepreneurs de présenter leurs projets à des acteurs clés du financement. Les participants
-            ont pu échanger directement avec des investisseurs passionnés, obtenir des retours précieux
-            et explorer des possibilités de collaboration. Cet événement a renforcé les liens entre les
-            porteurs de projets et les investisseurs, contribuant ainsi à créer un écosystème dynamique
-            et propice à la croissance des entreprises innovantes.
+            Le Bamboo Numeric de Cotonou a servi de cadre, le samedi 11 juillet 2026, à une nouvelle rencontre du mouvement citoyen Ensemble, on décolle. Pendant près de deux heures, de 10 h 30 à 12 h 30, une cinquantaine de jeunes, sélectionnés à partir du forum WhatsApp du Commandant Habib Aboukhedoud, ont pris part à cette séance d’échanges placée sous le signe de la réflexion, de l’engagement et de l’action. Le mouvement se présente comme une initiative citoyenne, apolitique et bénévole destinée à détecter, former et accompagner les jeunes porteurs de projets.
+
+            Loin d’une simple conférence, cette rencontre s’est voulue un véritable espace de dialogue. Les participants ont exposé leurs ambitions, partagé les difficultés qui freinent leurs initiatives et bénéficié des conseils du Commandant Habib Aboukhedoud. Fidèle à sa philosophie, celui-ci a insisté sur la nécessité de transformer les mentalités, de cultiver la discipline et de développer un état d’esprit tourné vers la persévérance et la responsabilité.
+
+            Dans le message publié à l’issue de la rencontre, le Commandant rappelle que la réussite ne se construit pas autour de l’assistanat, mais autour de la capacité de chacun à croire en son potentiel et à agir avec méthode. Une vision qui constitue l’un des fondements du concept Ensemble, on décolle, lequel ambitionne de faire émerger une génération de jeunes conscients de leurs responsabilités et capables de contribuer au développement de leur pays.
+
+            Par son parcours international dans l’aviation comme par son investissement bénévole auprès de la jeunesse, Habib Aboukhedoud s’efforce de mettre son expérience au service d’une cause qu’il considère essentielle. Son engagement constant mérite d’être salué. Dans un contexte où de nombreux jeunes recherchent des repères, des initiatives de cette nature offrent des occasions précieuses d’écoute, de mentorat et de partage d’expérience.
+
+            À travers Ensemble, on décolle, le Commandant Habib Aboukhedoud poursuit ainsi une démarche qui place la jeunesse au cœur de la construction de l’avenir, avec la conviction que les plus grands décollages prennent d’abord naissance dans les esprits.
             `,
         gallery: [
-          "/assets/images/gallery/event1-1.jfif",
-          "/assets/images/gallery/event1-2.jfif",
-          "/assets/images/gallery/event1-3.jfif",
-          "/assets/images/gallery/event1-4.jfif",
-          "/assets/images/gallery/event1-5.jfif",
-          "/assets/images/gallery/event1-6.jfif",
-          "/assets/images/gallery/event1-7.jfif",
-          "/assets/images/gallery/event1-8.jfif",
+          "/assets/images/11 Juillet/2.jpg",
+          "/assets/images/11 Juillet/3.jpg",
+          "/assets/images/11 Juillet/4.jpg",
+          "/assets/images/11 Juillet/5.jpg",
+          "/assets/images/11 Juillet/6.jpg",
+          "/assets/images/11 Juillet/7.jpg",
+          "/assets/images/11 Juillet/8.jpg",
+          "/assets/images/11 Juillet/9.jpg",
+          "/assets/images/11 Juillet/10.jpg",
+          "/assets/images/11 Juillet/11.jpg",
         ],
-        statNumber: +1000,
+        statNumber: +50,
       },
       {
         slug: "conference-uac-habib",
@@ -174,11 +179,6 @@ export const events: EventsData[] = [
       "/assets/images/Calavi/event1.jpg",
       "/assets/images/Calavi/event2.jpg",
       "/assets/images/Calavi/event3.jpg",
-      // "/assets/images/gallery/event1-4.jfif",
-      // "/assets/images/gallery/event1-5.jfif",
-      // "/assets/images/gallery/event1-6.jfif",
-      // "/assets/images/gallery/event1-7.jfif",
-      // "/assets/images/gallery/event1-8.jfif",
     ],
     statNumber: 3000,
   },

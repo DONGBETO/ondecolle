@@ -41,7 +41,7 @@ export default function Home() {
       {/* Hero */}
       <motion.section
         variants={fadeUp}
-        initial="hidden"
+        initial="visible"
         animate="visible"
       >
         <Hero
@@ -50,13 +50,13 @@ export default function Home() {
           subtitle="Dans la discipline, la rigueur, la détermination et la foi."
           description="Parce que chaque rêve mérite une piste d’envol, nous aidons gratuitement les jeunes à transformer leurs idées en projets concrets, durables et financés."
           buttonText="DEVENIR PARTENAIRE"
-          image="/assets/images/hero_image_home.jpg"
+          image="/assets/images/team/team_image.jpg"
         />
       </motion.section>
 
       {/* Vision */}
       <motion.section
-        variants={fadeLeft}
+        variants={fadeUp}
         initial="hidden"
         whileInView="visible"
         viewport={{ once: false, amount: 0.2 }}
@@ -84,7 +84,7 @@ export default function Home() {
 
       {/* Objectif */}
       <motion.section
-        variants={fadeRight}
+        variants={fadeUp}
         initial="hidden"
         whileInView="visible"
         viewport={{ once: false, amount: 0.2 }}
@@ -94,8 +94,8 @@ export default function Home() {
 
       {/* Partenaires */}
       <motion.section
-        variants={fadeRight}
-        initial="hidden"
+        variants={fadeUp}
+        initial="visible"
         whileInView="visible"
         viewport={{ once: false, amount: 0.2 }}
       >
@@ -124,7 +124,7 @@ export default function Home() {
 
       {/* Video */}
       <motion.section
-        variants={fadeLeft}
+        variants={fadeUp}
         initial="hidden"
         whileInView="visible"
         viewport={{ once: false, amount: 0.2 }}

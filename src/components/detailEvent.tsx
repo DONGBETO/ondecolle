@@ -44,14 +44,30 @@ const remaining = images.length - visibleCount;
         </motion.h1>
 
         {/* CONTENT */}
-        <motion.p
+        <motion.div
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="text-gray-700 mb-10 leading-relaxed"
+          className="mb-10"
         >
-          {event.content}
-        </motion.p>
+         {event.content
+          .trim()
+          .split(/\n\s*\n/)
+          .map((paragraph, index) => (
+            <motion.p
+              key={index}
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{
+                duration: 0.6,
+                delay: index * 0.15,
+              }}
+              className="mb-6 text-gray-700 leading-8 text-justify"
+            >
+              {paragraph.trim()}
+            </motion.p>
+          ))}
+        </motion.div>
 
         {/* VIDEO */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-14">
