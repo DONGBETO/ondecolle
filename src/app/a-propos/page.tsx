@@ -62,7 +62,7 @@ export default function About() {
       {/* HERO */}
       <motion.div
         variants={fadeUp}
-        initial="hidden"
+        initial="visible"
         whileInView="show"
         viewport={{ once: false, amount: 0.2 }}
         transition={{ duration: 1 }}
@@ -71,7 +71,7 @@ export default function About() {
           text="Découvrez le mouvement citoyen"
           subtitle="Le mouvement citoyen qui propulse la jeunesse africaine"
           title="ENSEMBLE, ON DÉCOLLE !"
-          image="/assets/images/photo-densemble-vision.jpg"
+          image="/assets/images/team/team_image.jpg"
         />
       </motion.div>
 

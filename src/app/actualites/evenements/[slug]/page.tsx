@@ -72,7 +72,7 @@ export default async function EventDetailPage({
 
       <Hero
         title="Détails de l'évènement"
-        image="/assets/images/hero_image_home.jpg"
+        image="/assets/images/team/team_image.jpg"
         overlay={true}
       />
 

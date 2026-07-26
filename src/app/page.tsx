@@ -32,7 +32,7 @@ export default function Home() {
       {/* Navbar */}
       <motion.div
         variants={fadeIn}
-        initial="hidden"
+        initial="visible"
         animate="visible"
       >
         <Navbar />

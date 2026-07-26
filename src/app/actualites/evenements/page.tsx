@@ -47,7 +47,7 @@ export default function Projet() {
       {/* HERO */}
       <motion.section
         variants={fadeUp}
-        initial="hidden"
+        initial="visible"
         animate="show"
         transition={{ duration: 1 }}
       >
@@ -56,7 +56,7 @@ export default function Projet() {
           text=""
           description=""
           title="Nos évènements"
-          image="/assets/images/hero_image_home.jpg"
+          image="/assets/images/team/team_image.jpg"
         />
       </motion.section>
 

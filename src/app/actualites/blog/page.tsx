@@ -31,7 +31,7 @@ export default async function Page() {
       {/* HERO */}
       <MotionSection
         variants={fadeUp}
-        initial="hidden"
+        initial="visible"
         animate="show"
         transition={{ duration: 0.8 }}
       >
@@ -40,7 +40,7 @@ export default async function Page() {
           text=""
           description=""
           title="Notre Blog"
-          image="/assets/images/hero_image_home.jpg"
+          image="/assets/images/team/team_image.jpg"
         />
       </MotionSection>
 

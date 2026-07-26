@@ -33,7 +33,7 @@ export default function Bibliotheque() {
           text=""
           description=""
           title="Notre bibliothèque de ressources"
-          image="/assets/images/hero_image_home.jpg"
+          image="/assets/images/team/team_image.jpg"
         />
       </motion.section>
 

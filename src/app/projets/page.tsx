@@ -35,7 +35,7 @@ export default function Projet() {
       {/* HERO */}
       <motion.div
         variants={fadeUp}
-        initial="hidden"
+        initial="visible"
         whileInView="show"
         viewport={{ once: false, amount: 0.2 }}
         transition={{ duration: 1 }}
@@ -45,7 +45,7 @@ export default function Projet() {
           text=""
           description="Ensemble, on décolle est un mouvement citoyen en pleine croissance, un écosystème où chaque acteur joue un rôle clé dans la transformation de la jeunesse africaine. Que vous soyez un jeune avec un rêve, un expert souhaitant partager son savoir, ou une entité désireuse d’investir dans un avenir prometteur, votre place est à nos côtés."
           title="PROJETS"
-          image="/assets/images/hero_image_home.jpg"
+          image="/assets/images/team/team_image.jpg"
         />
       </motion.div>
 
