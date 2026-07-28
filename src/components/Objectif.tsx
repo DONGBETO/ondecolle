@@ -37,9 +37,11 @@ export default function Objectif() {
             d’entraide et d’opportunités.
           </p>
 
-          <button className="bg-yellow-400 text-black px-6 py-3 rounded-full font-semibold hover:bg-yellow-300 transition cursor-pointer">
-            EN SAVOIR PLUS
-          </button>
+          <a href="/a-propos">
+            <button className="bg-yellow-400 text-black px-6 py-3 rounded-full font-semibold hover:bg-yellow-300 transition cursor-pointer">
+              EN SAVOIR PLUS
+            </button>
+          </a>
         </div>
 
       </div>

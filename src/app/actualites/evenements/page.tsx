@@ -62,7 +62,7 @@ export default function Projet() {
 
       {/* EVENT INTRO */}
       <motion.section
-        variants={fadeLeft}
+        variants={fadeUp}
         initial="hidden"
         whileInView="show"
         viewport={{ once: false, amount: 0.2 }}

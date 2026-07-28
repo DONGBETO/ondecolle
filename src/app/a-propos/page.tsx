@@ -77,7 +77,7 @@ export default function About() {
 
       {/* ENGAGEMENT */}
       <motion.div
-        variants={fadeLeft}
+        variants={fadeUp}
         initial="hidden"
         whileInView="show"
         viewport={{ once: false, amount: 0.2 }}
@@ -92,7 +92,7 @@ export default function About() {
 
       {/* VISION */}
       <motion.div
-        variants={fadeRight}
+        variants={fadeUp}
         initial="hidden"
         whileInView="show"
         viewport={{ once: false, amount: 0.2 }}
@@ -150,7 +150,7 @@ export default function About() {
 
       {/* PERSONNALITE */}
       <motion.div
-        variants={fadeLeft}
+        variants={fadeUp}
         initial="hidden"
         whileInView="show"
         viewport={{ once: false }}

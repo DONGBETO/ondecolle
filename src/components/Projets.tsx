@@ -27,10 +27,8 @@ const item = {
 
 export default function ProjectsSection() {
   return (
-    <section className="bg-gray-100 py-16 sm:py-20 overflow-x-hidden">
-      
+    <section className="bg-gray-100 py-16 sm:py-20 overflow-x-hidden">     
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-
         {/* Title */}
         <motion.h2
           initial={{ opacity: 0, y: 40 }}

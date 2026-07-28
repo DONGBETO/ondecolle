@@ -2,9 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-
 import { Play } from "lucide-react";
-
 import { motion } from "framer-motion";
 
 type Props = {
@@ -54,7 +52,6 @@ export default function EventCard({
             className="object-cover"
           />
         </motion.div>
-
       </div>
 
       {/* OVERLAY */}
