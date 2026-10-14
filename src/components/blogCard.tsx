@@ -1,6 +1,6 @@
+import Image from "next/image";
 import Link from "next/link";
 import { MoveRight } from 'lucide-react';
-
 
 type Props = {
   slug: string;
@@ -17,17 +17,18 @@ export default function BlogCard({
   title,
   description,
   category,
-  date,
 }: Props) {
   return (
     <div className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition duration-300 flex flex-col h-full">
 
       {/* IMAGE ZOOM */}
-      <div className="overflow-hidden h-52">
-        <img
+      <div className="relative overflow-hidden h-52">
+        <Image
           src={image}
           alt={title}
-          className="w-full h-full object-cover transform hover:scale-110 transition duration-500"
+          fill
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          className="object-cover transform hover:scale-110 transition duration-500"
         />
       </div>
 

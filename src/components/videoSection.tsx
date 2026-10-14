@@ -1,6 +1,6 @@
 
 
-export default function videoSection(){
+export default function VideoSection() {
 
 return (
 
@@ -14,9 +14,10 @@ return (
     <div className="relative w-full h-[250px] md:h-[500px]">
       <iframe
         className="w-full h-full rounded-xl"
-        src="https://www.youtube.com/embed/U_Fz2cmtqLQ?si=cJaCfRLfU6EZtt6B"
-        title="YouTube video"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        src="https://www.youtube-nocookie.com/embed/U_Fz2cmtqLQ"
+        title="Une de nos réalisations en vidéo"
+        loading="lazy"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
         allowFullScreen
       />
     </div>

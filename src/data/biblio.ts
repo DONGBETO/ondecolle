@@ -14,7 +14,7 @@ export const biblioTextData: BiblioTextProps[] = [
         lang: "fr",
     },
     {
-        title: "MA PATH, MA FAITH, MY MISSION",
+        title: "MY PATH, MY FAITH, MY MISSION",
         description: "My Path, My Faith, My Mission is a powerful call to African youth to believe in themselves, to act with discipline and faith, and to build the future without waiting for outside help. Through real-life stories and lessons drawn from his experience, Habib Aboukhedoud shows that success comes from rigor, hard work, and unity. He encourages young people to transform their talents into concrete actions and to serve their country with integrity. This book is both a testimony, a source of inspiration, and a guide for a generation determined to build the Africa of tomorrow.",
         image: "/assets/images/bibli2.jpg",
         file: "/assets/uploads/My-Path-My-Faith-My-Mission.pdf",

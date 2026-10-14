@@ -27,7 +27,7 @@ export default function BiblioText({ title, paragraph }: Props) {
                   sm:grid-cols-2 
                   gap-10
                 ">
-                  {biblioTextData.map((bibliotext, index) => (
+                  {biblioTextData.map((bibliotext) => (
                     <BiblioCard key={bibliotext.title} 
                     image={bibliotext.image}
                     title={bibliotext.title}

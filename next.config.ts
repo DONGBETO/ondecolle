@@ -1,7 +1,10 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {
+import type { NextConfig } from "next";
+
+// Note : `metadataBase` n'est pas une option de next.config — elle est
+// définie dans `src/app/layout.tsx` (export `metadata`).
+const nextConfig: NextConfig = {
   reactStrictMode: true,
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://votre-domaine.com'),
+  poweredByHeader: false,
 };
 
-module.exports = nextConfig;
+export default nextConfig;

@@ -1,4 +1,4 @@
-import React from "react";
+import Image from "next/image";
 
 type Props = {
   title: string;
@@ -11,19 +11,23 @@ export default function ProjetDetail({ title, description, image }: Props) {
     <div className="max-w-7xl mx-auto p-6">
 
       {image && (
-        <img
-          src={image || "/assets/images/hero_image_home.jpg"}
-          alt={title}
-          className="w-full h-64 object-cover rounded-lg mb-6"
-        />
+        <div className="relative w-full h-64 mb-6">
+          <Image
+            src={image}
+            alt={title}
+            fill
+            sizes="100vw"
+            className="object-cover rounded-lg"
+          />
+        </div>
       )}
 
-      <h1 className="text-2xl font-bold text-gray-800">
+      <h2 className="text-2xl font-bold text-gray-800">
         {title}
-      </h1>
+      </h2>
 
-      <p className="text-gray-600 mt-4 leading-relaxed space-y-4 whitespace-pre-line">
-        {description}
+      <p className="text-gray-600 mt-4 leading-relaxed whitespace-pre-line">
+        {description.trim()}
       </p>
 
     </div>

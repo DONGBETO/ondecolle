@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { memo } from "react";
 
@@ -10,6 +11,7 @@ type Props = {
   subtitle?: string;
   description?: string;
   buttonText?: string;
+  buttonHref?: string;
   image: string;
   overlay?: boolean;
 };
@@ -20,6 +22,7 @@ function Hero({
   subtitle = "",
   description = "",
   buttonText = "",
+  buttonHref = "/contacts",
   image = "",
   overlay = true,
 }: Props) {
@@ -36,8 +39,9 @@ function Hero({
       >
         <Image
           src={image}
-          alt="hero"
+          alt=""
           fill
+          sizes="100vw"
           className="object-cover"
           priority
         />
@@ -57,15 +61,17 @@ function Hero({
       {/* Content */}
       <div className="relative z-10 max-w-3xl px-4">
 
-        <motion.p
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: false, amount: 0.3 }}
-          transition={{ duration: 0.7, delay: 0.2 }}
-          className="text-xl md:text-2xl font-bold text-white mb-4"
-        >
-          {text}
-        </motion.p>
+        {text && (
+          <motion.p
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: false, amount: 0.3 }}
+            transition={{ duration: 0.7, delay: 0.2 }}
+            className="text-xl md:text-2xl font-bold text-white mb-4"
+          >
+            {text}
+          </motion.p>
+        )}
 
         <motion.h1
           initial={{ opacity: 0, y: 60 }}
@@ -102,7 +108,8 @@ function Hero({
         )}
 
         {buttonText && (
-          <motion.button
+          <Link href={buttonHref} className="inline-block">
+          <motion.span
             initial={{ opacity: 0, scale: 0.7 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: false, amount: 0.3 }}
@@ -113,10 +120,11 @@ function Hero({
             }}
             whileHover={{ scale: 1.08, y: -3 }}
             whileTap={{ scale: 0.95 }}
-            className="bg-yellow-400 text-black px-6 py-3 text-2xl rounded-full font-semibold hover:bg-yellow-300 transition cursor-pointer"
+            className="inline-block bg-yellow-400 text-black px-6 py-3 text-2xl rounded-full font-semibold hover:bg-yellow-300 transition cursor-pointer"
           >
             {buttonText}
-          </motion.button>
+          </motion.span>
+          </Link>
         )}
 
       </div>

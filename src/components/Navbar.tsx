@@ -6,13 +6,23 @@ import Link from "next/link";
 import { useState, memo } from "react";
 import { usePathname } from "next/navigation";
 
+const mobileLinks = [
+  { label: "Accueil", href: "/" },
+  { label: "À propos", href: "/a-propos" },
+  { label: "Blog", href: "/actualites/blog" },
+  { label: "Évènements", href: "/actualites/evenements" },
+  { label: "Bibliothèque", href: "/actualites/bibliotheque" },
+  { label: "Projets", href: "/projets" },
+  { label: "Contacts", href: "/contacts" },
+];
+
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
-  const [openActualites, setOpenActualites] = useState(false);
 
   const pathname = usePathname();
 
-  const isActive = (path: string) => pathname === path;
+  const isActive = (path: string) =>
+    path === "/" ? pathname === "/" : pathname === path || pathname.startsWith(`${path}/`);
 
   const isActualitesActive = pathname.startsWith("/actualites");
 
@@ -24,14 +34,14 @@ function Navbar() {
         <Link href="/" className="flex items-center gap-3">
           <Image
             src="/assets/logos/Logo.png"
-            alt="Logo"
+            alt="Ensemble, on décolle"
             width={100}
             height={100}
             priority
           />
 
           <p className="block md:hidden lg:block text-sm font-semibold text-black">
-            Unis pour servir, déterminé pour servir
+            Unis pour servir, déterminés pour servir
           </p>
         </Link>
 
@@ -163,8 +173,11 @@ function Navbar() {
 
         {/* Mobile Button */}
         <button
+          type="button"
           onClick={() => setIsOpen(!isOpen)}
           className="md:hidden text-blue-900"
+          aria-label={isOpen ? "Fermer le menu" : "Ouvrir le menu"}
+          aria-expanded={isOpen}
         >
           {isOpen ? <X size={28} /> : <Menu size={28} />}
         </button>
@@ -173,24 +186,35 @@ function Navbar() {
 
       {/* Mobile Menu */}
       {isOpen && (
-        <div className="fixed inset-0 z-40 bg-black/40 md:hidden">
+        <div
+          className="fixed inset-0 z-40 bg-black/40 md:hidden"
+          onClick={() => setIsOpen(false)}
+        >
 
-          <div className="absolute right-0 top-0 w-72 h-full bg-yellow-400 shadow-2xl p-6 flex flex-col gap-6">
+          <div
+            className="absolute right-0 top-0 w-72 h-full bg-yellow-400 shadow-2xl p-6 flex flex-col gap-6 overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
 
             <button
+              type="button"
               onClick={() => setIsOpen(false)}
               className="self-end text-black"
+              aria-label="Fermer le menu"
             >
               <X size={26} />
             </button>
 
-            <Link
-              href="/"
-              onClick={() => setIsOpen(false)}
-              className={isActive("/") ? "font-bold text-blue-900" : "text-blue-800"}
-            >
-              Accueil
-            </Link>
+            {mobileLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                onClick={() => setIsOpen(false)}
+                className={isActive(link.href) ? "font-bold text-blue-900" : "text-blue-800"}
+              >
+                {link.label}
+              </Link>
+            ))}
 
           </div>
         </div>

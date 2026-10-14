@@ -1,30 +1,20 @@
 import Image from "next/image";
-import { memo } from "react";
+import Link from "next/link";
+import { Music2 } from "lucide-react";
+import { FaLinkedin, FaInstagram } from "react-icons/fa6";
+import { FaFacebook } from "react-icons/fa";
+import { navLinks, siteConfig } from "@/src/config/site";
 
-type FooterLink = {
-  label: string;
-  href: string;
-};
+const socials = [
+  { label: "Facebook", icon: <FaFacebook size={18} />, href: siteConfig.socials.facebook },
+  { label: "Instagram", icon: <FaInstagram size={18} />, href: siteConfig.socials.instagram },
+  { label: "LinkedIn", icon: <FaLinkedin size={18} />, href: siteConfig.socials.linkedin },
+  { label: "TikTok", icon: <Music2 size={18} />, href: siteConfig.socials.tiktok },
+];
 
-type Social = {
-  icon: React.ReactNode;
-  href: string;
-  target?: string;
-};
+export default function Footer() {
+  const year = new Date().getFullYear();
 
-type Props = {
-  logo: string;
-  description: string;
-  links: FooterLink[];
-  socials: Social[];
-};
-
-function Footer({
-  logo,
-  description,
-  links,
-  socials,
-}: Props) {
   return (
     <footer className="bg-[#1f2a5a] text-white pt-16 pb-8">
       <div className="max-w-7xl mx-auto px-4 md:px-8">
@@ -35,29 +25,30 @@ function Footer({
           <div className="mt-4">
 
             <div className="flex items-center gap-3 mb-2">
-              <a href="#">
+              <Link href="/" aria-label="Accueil">
                 <Image
-                  src={logo}
-                  alt="logo"
+                  src={siteConfig.logo}
+                  alt={siteConfig.movement}
                   width={250}
                   height={250}
-                  priority
                   className="-mx-8 -mt-12 md:-mx-8 md:-mt-12"
                 />
-              </a>
+              </Link>
             </div>
 
             <p className="text-gray-300 text-sm mb-4">
-              {description}
+              {siteConfig.mission}
             </p>
 
             {/* Socials */}
             <div className="flex gap-4">
-              {socials.map((social, index) => (
+              {socials.map((social) => (
                 <a
-                  key={index}
+                  key={social.label}
                   href={social.href}
-                  target={social.target}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={social.label}
                   className="text-gray-300 hover:text-white transition"
                 >
                   {social.icon}
@@ -75,18 +66,16 @@ function Footer({
             </h3>
 
             <ul className="space-y-2 text-gray-300 text-sm">
-
-              {links.map((link, index) => (
-                <li key={index}>
-                  <a
+              {navLinks.map((link) => (
+                <li key={link.href}>
+                  <Link
                     href={link.href}
                     className="hover:text-white transition"
                   >
                     {link.label}
-                  </a>
+                  </Link>
                 </li>
               ))}
-
             </ul>
           </div>
 
@@ -94,11 +83,11 @@ function Footer({
           <div>
 
             <h3 className="text-lg mb-4 text-gray-300">
-              N'hésitez pas à nous contacter pour discuter de vos projets
+              N&apos;hésitez pas à nous contacter pour discuter de vos projets
               et découvrir comment nous pouvons vous aider.
             </h3>
 
-            <a
+            <Link
               href="/contacts"
               className="
                 inline-block
@@ -113,19 +102,17 @@ function Footer({
               "
             >
               NOUS CONTACTER
-            </a>
+            </Link>
 
           </div>
         </div>
 
         {/* Bottom */}
         <div className="border-t border-gray-600 pt-6 text-center text-sm text-gray-400">
-          © 2026 Ensemble, on décolle. Tous droits réservés
+          © {year} {siteConfig.movement}. Tous droits réservés
         </div>
 
       </div>
     </footer>
   );
 }
-
-export default memo(Footer);

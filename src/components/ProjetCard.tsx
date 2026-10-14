@@ -36,6 +36,7 @@ export default function ProjectCard({
             src={image}
             alt={title || "image projet"}
             fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             className="object-cover"
           />
         </div>
@@ -62,10 +63,11 @@ export default function ProjectCard({
         )}
 
         {id && (
-          <Link href={`/projets/${id}`}>
-            <button className="bg-yellow-400 text-black px-4 py-2 rounded-full text-sm font-semibold hover:bg-yellow-300 transition cursor-pointer">
-              Voir le projet
-            </button>
+          <Link
+            href={`/projets/${id}`}
+            className="inline-block bg-yellow-400 text-black px-4 py-2 rounded-full text-sm font-semibold hover:bg-yellow-300 transition cursor-pointer"
+          >
+            Voir le projet
           </Link>
         )}
       </div>

@@ -15,15 +15,9 @@ import { motion } from "framer-motion";
 
 import {
   fadeUp,
-  fadeLeft,
-  fadeRight,
   fadeIn,
   scaleIn,
 } from "@/src/utils/animation";
-
-import { Music2 } from "lucide-react";
-import { FaLinkedin, FaInstagram } from "react-icons/fa6";
-import { FaFacebook } from "react-icons/fa";
 
 export default function Home() {
   return (
@@ -149,40 +143,7 @@ export default function Home() {
         whileInView="visible"
         viewport={{ once: false, amount: 0.2 }}
       >
-        <Footer
-          logo="/assets/logos/logoo.png"
-          description="Notre mission : détecter, accompagner et propulser la jeunesse africaine vers le succès."
-          links={[
-            { label: "Bibliothèque", href: "/actualites/bibliotheque" },
-            { label: "Évènements", href: "/actualites/evenements" },
-            { label: "Projets", href: "/projets" },
-            { label: "Blog", href: "/actualites/blog" },
-            { label: "Contacts", href: "/contacts" },
-            { label: "À propos", href: "/a-propos" },
-          ]}
-          socials={[
-            {
-              icon: <FaFacebook size={18} />,
-              href: "https://www.facebook.com/habib.aboukhedoud",
-              target: "_blank",
-            },
-            {
-              icon: <FaInstagram size={18} />,
-              href: "https://instagram.com/habib_aboukhedoud",
-              target: "_blank",
-            },
-            {
-              icon: <FaLinkedin size={18} />,
-              href: "https://www.linkedin.com/in/habib-aboukhedoud-b7044a186",
-              target: "_blank",
-            },
-            {
-              icon: <Music2 size={18} />,
-              href: "https://www.tiktok.com/@habibaboukhedoud",
-              target: "_blank",
-            },
-          ]}
-        />
+        <Footer />
       </motion.footer>
 
     </main>
