@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 export default function Objectif() {
   return (
@@ -37,11 +38,12 @@ export default function Objectif() {
             d’entraide et d’opportunités.
           </p>
 
-          <a href="/a-propos">
-            <button className="bg-yellow-400 text-black px-6 py-3 rounded-full font-semibold hover:bg-yellow-300 transition cursor-pointer">
-              EN SAVOIR PLUS
-            </button>
-          </a>
+          <Link
+            href="/a-propos"
+            className="inline-block bg-yellow-400 text-black px-6 py-3 rounded-full font-semibold hover:bg-yellow-300 transition cursor-pointer"
+          >
+            EN SAVOIR PLUS
+          </Link>
         </div>
 
       </div>

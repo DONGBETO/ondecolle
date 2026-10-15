@@ -5,40 +5,57 @@ import { motion } from "framer-motion";
 
 import CustomSelect from "./departement";
 import AutoTextarea from "./textarea";
+import { siteConfig } from "@/src/config/site";
 
-const fadeUp = {
-  hidden: { opacity: 0, y: 40 },
-  show: { opacity: 1, y: 0 },
+type FormState = {
+  prenoms: string;
+  nom: string;
+  email: string;
+  objet: string;
+  message: string;
+  pays: string;
+  departement: string;
+  isInBenin: string;
 };
 
-export default function ContactSection() {
-  const [form, setForm] = useState({
-    prenoms: "",
-    nom: "",
-    email: "",
-    objet: "",
-    message: "",
-    pays: "",
-    departement: "",
-    isInBenin: "",
-  });
+type FormErrors = Partial<Record<keyof FormState, string>>;
 
-  const [errors, setErrors] = useState<any>({});
+const EMPTY_FORM: FormState = {
+  prenoms: "",
+  nom: "",
+  email: "",
+  objet: "",
+  message: "",
+  pays: "",
+  departement: "",
+  isInBenin: "",
+};
+
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+export default function ContactSection() {
+  const [form, setForm] = useState<FormState>(EMPTY_FORM);
+  const [errors, setErrors] = useState<FormErrors>({});
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [submitError, setSubmitError] = useState("");
 
-  const handleChange = (e: any) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+    setSuccess(false);
   };
 
   const validate = () => {
-    let newErrors: any = {};
+    const newErrors: FormErrors = {};
 
-    if (!form.prenoms) newErrors.prenoms = "Prénoms requis";
-    if (!form.nom) newErrors.nom = "Nom requis";
-    if (!form.email.includes("@")) newErrors.email = "Email invalide";
-    if (!form.objet) newErrors.objet = "Objet requis";
-    if (!form.message) newErrors.message = "Message requis";
+    if (!form.prenoms.trim()) newErrors.prenoms = "Prénoms requis";
+    if (!form.nom.trim()) newErrors.nom = "Nom requis";
+    if (!EMAIL_REGEX.test(form.email.trim())) newErrors.email = "Email invalide";
+    if (!form.objet.trim()) newErrors.objet = "Objet requis";
+    if (!form.message.trim()) newErrors.message = "Message requis";
 
     if (form.isInBenin === "oui" && !form.departement) {
       newErrors.departement = "Département requis";
@@ -52,8 +69,10 @@ export default function ContactSection() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async (e: any) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setSubmitError("");
+    setSuccess(false);
     if (!validate()) return;
 
     try {
@@ -67,17 +86,18 @@ export default function ContactSection() {
 
       if (res.ok) {
         setSuccess(true);
-        setForm({
-          prenoms: "",
-          nom: "",
-          email: "",
-          objet: "",
-          message: "",
-          pays: "",
-          departement: "",
-          isInBenin: "",
-        });
+        setForm(EMPTY_FORM);
+        setErrors({});
+      } else {
+        const data = await res.json().catch(() => null);
+        setSubmitError(
+          data?.error
+            ? `L'envoi a échoué : ${data.error}`
+            : "L'envoi a échoué. Veuillez réessayer plus tard."
+        );
       }
+    } catch {
+      setSubmitError("Impossible de joindre le serveur. Vérifiez votre connexion.");
     } finally {
       setLoading(false);
     }
@@ -105,17 +125,21 @@ export default function ContactSection() {
           <div className="space-y-6 text-gray-700">
             <div>
               <h3 className="font-semibold text-blue-900">Adresse</h3>
-              <p>Cotonou - Fidjrossè (Bénin)</p>
+              <p>{siteConfig.contact.address}</p>
             </div>
 
             <div>
               <h3 className="font-semibold text-blue-900">Email</h3>
-              <p>contact@ondecolle.com</p>
+              <a href={`mailto:${siteConfig.contact.email}`} className="hover:underline">
+                {siteConfig.contact.email}
+              </a>
             </div>
 
             <div>
-              <h3 className="font-semibold text-blue-900">Phone</h3>
-              <p>+229 01 61 93 93 10</p>
+              <h3 className="font-semibold text-blue-900">Téléphone</h3>
+              <a href={`tel:${siteConfig.contact.phone.replace(/\s/g, "")}`} className="hover:underline">
+                {siteConfig.contact.phone}
+              </a>
             </div>
           </div>
         </motion.div>
@@ -128,7 +152,7 @@ export default function ContactSection() {
           transition={{ duration: 0.7 }}
           className="w-full lg:w-[60%] bg-white rounded-2xl shadow-xl p-6 sm:p-8"
         >
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleSubmit} noValidate className="space-y-5">
 
             {/* Prénoms */}
             <motion.input
@@ -162,8 +186,10 @@ export default function ContactSection() {
               name="email"
               value={form.email}
               onChange={handleChange}
+              type="email"
+              autoComplete="email"
               placeholder="adresse@gmail.com"
-              className="w-full border border-gray-200 rounded-lg px-4 py-3 text-sm outline-none transition focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 bg-white placeholder:text-gray-300 text-gray-500"
+              className={inputClass}
             />
             {errors.email && (
               <p className="text-red-500 text-sm">{errors.email}</p>
@@ -187,7 +213,7 @@ export default function ContactSection() {
                 <CustomSelect
                   value={form.departement}
                   onChange={(value: string) =>
-                    setForm({ ...form, departement: value })
+                    setForm((prev) => ({ ...prev, departement: value }))
                   }
                 />
                 {errors.departement && (
@@ -221,6 +247,9 @@ export default function ContactSection() {
               placeholder="Objet"
               className={inputClass}
             />
+            {errors.objet && (
+              <p className="text-red-500 text-sm">{errors.objet}</p>
+            )}
 
             {/* MESSAGE */}
             <AutoTextarea
@@ -228,6 +257,9 @@ export default function ContactSection() {
               value={form.message}
               onChange={handleChange}
             />
+            {errors.message && (
+              <p className="text-red-500 text-sm">{errors.message}</p>
+            )}
 
             {/* BUTTON */}
             <motion.button
@@ -245,14 +277,21 @@ export default function ContactSection() {
                 transition
                 shadow-md
                 hover:shadow-xl
+                disabled:opacity-60
+                disabled:cursor-not-allowed
               "
             >
               {loading ? "Envoi..." : "ENVOYER"}
             </motion.button>
 
             {success && (
-              <p className="text-green-600 text-sm">
+              <p className="text-green-600 text-sm" role="status">
                 Message envoyé avec succès
+              </p>
+            )}
+            {submitError && (
+              <p className="text-red-500 text-sm" role="alert">
+                {submitError}
               </p>
             )}
           </form>

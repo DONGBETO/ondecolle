@@ -1,0 +1,2630 @@
+From 3225525882876b1252cf5763253b1a28739ed746 Mon Sep 17 00:00:00 2001
+From: DONGBETO <christianemmanueldongbeto@gmail.com>
+Date: Wed, 14 Oct 2026 22:10:01 +0200
+Subject: [PATCH] =?UTF-8?q?Corrige=20les=20erreurs=20bloquantes=20et=20pr?=
+ =?UTF-8?q?=C3=A9pare=20le=20d=C3=A9ploiement?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Bloquant pour le build / la production :
+- Analytics : useSearchParams enveloppé dans <Suspense> (le build de
+  production échouait avec missing-suspense-with-csr-bailout)
+- Galerie Porto-Novo : 13 images référencées en .jpg alors que les fichiers
+  sont en .JPG (cassées sur un hébergement Linux)
+- Image Open Graph cover.jpg inexistante remplacée par une image existante
+- metadataBase déplacé de next.config (option invalide) vers le layout
+
+Bugs fonctionnels :
+- Menu mobile : il ne contenait que « Accueil », tous les liens ajoutés
+- Boutons d'appel à l'action (Devenir partenaire, Soumettre mon projet…)
+  inactifs : ils mènent désormais à /contacts
+- Formulaire de contact : erreurs objet/message affichées, message en cas
+  d'échec d'envoi, validation email correcte
+- API contact : échappement HTML (injection), validation côté serveur,
+  pays/département inclus, EMAIL_RECEIVER pris en compte
+- Google Analytics : page vue initiale comptée deux fois, URL mal formée
+- Pagination du blog : page invalide (?page=abc) n'affiche plus une page vide
+
+Qualité / SEO :
+- Footer centralisé (src/config/site.ts) : liens sociaux identiques partout
+- Titre et description propres à chaque page, title template
+- Pré-génération statique des pages projets
+- 0 erreur ESLint (11 erreurs + 15 avertissements avant)
+- Fins de ligne normalisées (LF) + .gitattributes
+- .env.example et README de déploiement
+- projet1.psd (15 Mo) sorti de public/ vers design/
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01BgtUVFcoymnijX92K6ofcc
+---
+ .env.example                                  |  16 ++
+ .gitattributes                                |   8 +
+ .gitignore                                    |   3 +-
+ README.md                                     |  63 +++++---
+ {public/assets/images => design}/projet1.psd  | Bin
+ next.config.ts                                |  11 +-
+ src/app/a-propos/layout.tsx                   |  11 ++
+ src/app/a-propos/page.tsx                     |  61 +-------
+ src/app/actualites/bibliotheque/layout.tsx    |  11 ++
+ src/app/actualites/bibliotheque/page.tsx      |  39 +----
+ src/app/actualites/blog/[slug]/page.tsx       |  47 +-----
+ src/app/actualites/blog/page.tsx              |  50 +-----
+ src/app/actualites/evenements/[slug]/page.tsx |  38 +----
+ src/app/actualites/evenements/layout.tsx      |  11 ++
+ src/app/actualites/evenements/page.tsx        |  52 +------
+ src/app/api/contact/route.ts                  | 146 ++++++++++++++----
+ src/app/contacts/layout.tsx                   |  11 ++
+ src/app/contacts/page.tsx                     |  39 +----
+ src/app/layout.tsx                            |  85 ++++------
+ src/app/page.tsx                              |  41 +----
+ src/app/projets/[id]/page.tsx                 |  58 ++-----
+ src/app/projets/layout.tsx                    |  11 ++
+ src/app/projets/page.tsx                      |  39 +----
+ src/app/usePageTracking.ts                    |  20 ++-
+ src/components/Blog.tsx                       |  15 +-
+ src/components/Footer.tsx                     |  81 ++++------
+ src/components/Header.tsx                     |   0
+ src/components/Hero.tsx                       |  34 ++--
+ src/components/ImpactSection.tsx              |   4 +-
+ src/components/Navbar.tsx                     |  50 ++++--
+ src/components/Objectif.tsx                   |  12 +-
+ src/components/ProjetCard.tsx                 |  10 +-
+ src/components/Services.tsx                   |   0
+ src/components/Testimonials.tsx               |   0
+ src/components/analytic.tsx                   |  16 +-
+ src/components/biblio.tsx                     |   2 +-
+ src/components/blogCard.tsx                   |  11 +-
+ src/components/btnCard.tsx                    |  18 +--
+ src/components/contact.tsx                    | 125 +++++++++------
+ src/components/detailEvent.tsx                |  21 ++-
+ src/components/projetDetail.tsx               |  24 +--
+ src/components/videoSection.tsx               |   9 +-
+ src/config/site.ts                            |  42 +++++
+ src/data/biblio.ts                            |   2 +-
+ src/data/event.ts                             |  27 ++--
+ src/global.d.ts                               |   5 +-
+ src/lib/data.ts                               |   0
+ src/lib/gtag.ts                               |  28 +++-
+ tsconfig.json                                 |  41 +----
+ 49 files changed, 668 insertions(+), 780 deletions(-)
+ create mode 100644 .env.example
+ create mode 100644 .gitattributes
+ rename {public/assets/images => design}/projet1.psd (100%)
+ create mode 100644 src/app/a-propos/layout.tsx
+ create mode 100644 src/app/actualites/bibliotheque/layout.tsx
+ create mode 100644 src/app/actualites/evenements/layout.tsx
+ create mode 100644 src/app/contacts/layout.tsx
+ create mode 100644 src/app/projets/layout.tsx
+ delete mode 100644 src/components/Header.tsx
+ delete mode 100644 src/components/Services.tsx
+ delete mode 100644 src/components/Testimonials.tsx
+ create mode 100644 src/config/site.ts
+ delete mode 100644 src/lib/data.ts
+
+diff --git a/.env.example b/.env.example
+new file mode 100644
+index 0000000..818e831
+--- /dev/null
++++ b/.env.example
+@@ -0,0 +1,16 @@
++# Copier ce fichier en .env.local (développement) et renseigner les valeurs.
++# En production, définir ces variables dans le tableau de bord de l'hébergeur (ex. Vercel).
++
++# Compte Gmail utilisé pour envoyer les messages du formulaire de contact.
++EMAIL_USER=adresse@gmail.com
++# Mot de passe d'application Gmail (16 caractères) — PAS le mot de passe du compte.
++# https://myaccount.google.com/apppasswords
++EMAIL_PASS=
++# Adresse qui reçoit les messages (par défaut : EMAIL_USER).
++EMAIL_RECEIVER=contact@ondecolle.com
++
++# URL publique du site (sans / final), utilisée pour le SEO et les aperçus de partage.
++NEXT_PUBLIC_SITE_URL=https://ondecolle.com
++
++# (Optionnel) ID Google Analytics 4. Par défaut : G-QNVS3YYHHR
++# NEXT_PUBLIC_GA_ID=
+diff --git a/.gitattributes b/.gitattributes
+new file mode 100644
+index 0000000..7a03568
+--- /dev/null
++++ b/.gitattributes
+@@ -0,0 +1,8 @@
++* text=auto eol=lf
++*.jpg binary
++*.JPG binary
++*.jpeg binary
++*.png binary
++*.pdf binary
++*.psd binary
++*.ico binary
+diff --git a/.gitignore b/.gitignore
+index 0664f01..1c54219 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -32,6 +32,7 @@ yarn-error.log*
+ 
+ # env files (can opt-in for committing if needed)
+ .env*
++!.env.example
+ 
+ # vercel
+ .vercel
+@@ -45,4 +46,4 @@ next-env.d.ts
+ .env
+ .env.local
+ .env.development
+-.env.production
+\ No newline at end of file
++.env.production
+diff --git a/README.md b/README.md
+index e215bc4..456e797 100644
+--- a/README.md
++++ b/README.md
+@@ -1,36 +1,59 @@
+-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
++# Ensemble, on décolle — site web
+ 
+-## Getting Started
++Site du mouvement citoyen **« Ensemble, on décolle »** (Fondation Habib), construit avec Next.js 16 (App Router), React 19, Tailwind CSS 4 et Framer Motion.
+ 
+-First, run the development server:
++## Démarrage en local
+ 
+ ```bash
++npm install
++cp .env.example .env.local   # puis renseigner les valeurs
+ npm run dev
+-# or
+-yarn dev
+-# or
+-pnpm dev
+-# or
+-bun dev
+ ```
+ 
+-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
++Ouvrir http://localhost:3000.
+ 
+-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
++## Scripts
+ 
+-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
++| Commande        | Rôle                                   |
++| --------------- | -------------------------------------- |
++| `npm run dev`   | Serveur de développement (Turbopack)   |
++| `npm run build` | Build de production                    |
++| `npm run start` | Lance le build de production           |
++| `npm run lint`  | Vérifie le code avec ESLint            |
+ 
+-## Learn More
++## Variables d'environnement
+ 
+-To learn more about Next.js, take a look at the following resources:
++Voir `.env.example`.
+ 
+-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
++| Variable               | Obligatoire | Description |
++| ---------------------- | ----------- | ----------- |
++| `EMAIL_USER`           | oui         | Compte Gmail qui envoie les messages du formulaire de contact |
++| `EMAIL_PASS`           | oui         | **Mot de passe d'application** Gmail (pas le mot de passe du compte) |
++| `EMAIL_RECEIVER`       | non         | Adresse qui reçoit les messages (défaut : `EMAIL_USER`) |
++| `NEXT_PUBLIC_SITE_URL` | recommandé  | URL publique du site, pour le SEO et les aperçus de partage |
++| `NEXT_PUBLIC_GA_ID`    | non         | ID Google Analytics 4 (défaut : `G-QNVS3YYHHR`) |
+ 
+-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
++## Déploiement (Vercel)
+ 
+-## Deploy on Vercel
++1. Pousser le code sur GitHub (`main`).
++2. Sur https://vercel.com/new, importer le dépôt `DONGBETO/ondecolle` (framework détecté automatiquement : Next.js).
++3. Dans **Settings → Environment Variables**, ajouter les variables ci-dessus.
++4. Déployer. Chaque push sur `main` redéploie automatiquement.
++5. (Optionnel) **Settings → Domains** : ajouter le nom de domaine, puis mettre à jour `NEXT_PUBLIC_SITE_URL`.
+ 
+-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
++## Organisation
+ 
+-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
++```
++src/
++  app/          Pages (App Router) et route API /api/contact
++  components/   Composants d'interface
++  config/       site.ts — nom, URL, contacts, réseaux sociaux, liens du menu
++  data/         Contenu : articles, évènements, projets, bibliothèque, équipe
++  lib/          Google Analytics
++public/assets/  Images, logos et PDF
++design/         Fichiers sources de design (non publiés)
++```
++
++Pour ajouter un article, un évènement ou un projet, il suffit de modifier le fichier correspondant dans `src/data/`.
++
++> ⚠️ L'hébergement est sous Linux : les noms de fichiers sont **sensibles à la casse**. Un chemin `/assets/images/photo.jpg` ne trouvera pas `photo.JPG`.
+diff --git a/public/assets/images/projet1.psd b/design/projet1.psd
+similarity index 100%
+rename from public/assets/images/projet1.psd
+rename to design/projet1.psd
+diff --git a/next.config.ts b/next.config.ts
+index 3977e51..1a6837a 100644
+--- a/next.config.ts
++++ b/next.config.ts
+@@ -1,7 +1,10 @@
+-/** @type {import('next').NextConfig} */
+-const nextConfig = {
++import type { NextConfig } from "next";
++
++// Note : `metadataBase` n'est pas une option de next.config — elle est
++// définie dans `src/app/layout.tsx` (export `metadata`).
++const nextConfig: NextConfig = {
+   reactStrictMode: true,
+-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://votre-domaine.com'),
++  poweredByHeader: false,
+ };
+ 
+-module.exports = nextConfig;
++export default nextConfig;
+diff --git a/src/app/a-propos/layout.tsx b/src/app/a-propos/layout.tsx
+new file mode 100644
+index 0000000..511d118
+--- /dev/null
++++ b/src/app/a-propos/layout.tsx
+@@ -0,0 +1,11 @@
++import type { Metadata } from "next";
++
++export const metadata: Metadata = {
++  title: "À propos",
++  description:
++    "Découvrez le mouvement citoyen « Ensemble, on décolle » : notre engagement, notre mission, notre vision et notre équipe.",
++};
++
++export default function Layout({ children }: { children: React.ReactNode }) {
++  return children;
++}
+diff --git a/src/app/a-propos/page.tsx b/src/app/a-propos/page.tsx
+index e12f27d..29894e8 100644
+--- a/src/app/a-propos/page.tsx
++++ b/src/app/a-propos/page.tsx
+@@ -12,10 +12,6 @@ import Footer from "@/src/components/Footer";
+ 
+ import { motion } from "framer-motion";
+ 
+-import { Music2 } from "lucide-react";
+-import { FaLinkedin, FaInstagram } from "react-icons/fa6";
+-import { FaFacebook } from "react-icons/fa";
+-
+ const fadeUp = {
+   hidden: {
+     opacity: 0,
+@@ -27,28 +23,6 @@ const fadeUp = {
+   },
+ };
+ 
+-const fadeLeft = {
+-  hidden: {
+-    opacity: 0,
+-    x: -80,
+-  },
+-  show: {
+-    opacity: 1,
+-    x: 0,
+-  },
+-};
+-
+-const fadeRight = {
+-  hidden: {
+-    opacity: 0,
+-    x: 80,
+-  },
+-  show: {
+-    opacity: 1,
+-    x: 0,
+-  },
+-};
+-
+ export default function About() {
+   return (
+     <motion.main
+@@ -211,40 +185,7 @@ export default function About() {
+         viewport={{ once: false }}
+         transition={{ duration: 1.2 }}
+       >
+-        <Footer
+-          logo="/assets/logos/logoo.png"
+-          description="Notre mission : détecter, accompagner et propulser la jeunesse africaine vers le succès."
+-          links={[
+-            { label: "Bibliothèque", href: "/actualites/bibliotheque" },
+-            { label: "Évènements", href: "/actualites/evenements" },
+-            { label: "Projets", href: "/projets" },
+-            { label: "Blog", href: "/actualites/blog" },
+-            { label: "Contacts", href: "/contacts" },
+-            { label: "À propos", href: "#" },
+-          ]}
+-          socials={[
+-            {
+-              icon: <FaFacebook size={18} />,
+-              href: "https://facebook.com",
+-              target: "_blank",
+-            },
+-            {
+-              icon: <FaInstagram size={18} />,
+-              href: "https://instagram.com",
+-              target: "_blank",
+-            },
+-            {
+-              icon: <FaLinkedin size={18} />,
+-              href: "https://linkedin.com",
+-              target: "_blank",
+-            },
+-            {
+-              icon: <Music2 size={18} />,
+-              href: "https://tiktok.com",
+-              target: "_blank",
+-            },
+-          ]}
+-        />
++        <Footer />
+       </motion.div>
+     </motion.main>
+   );
+diff --git a/src/app/actualites/bibliotheque/layout.tsx b/src/app/actualites/bibliotheque/layout.tsx
+new file mode 100644
+index 0000000..5589d46
+--- /dev/null
++++ b/src/app/actualites/bibliotheque/layout.tsx
+@@ -0,0 +1,11 @@
++import type { Metadata } from "next";
++
++export const metadata: Metadata = {
++  title: "Bibliothèque",
++  description:
++    "Téléchargez gratuitement nos ressources : livres, guides et outils pour développer vos compétences et vos projets.",
++};
++
++export default function Layout({ children }: { children: React.ReactNode }) {
++  return children;
++}
+diff --git a/src/app/actualites/bibliotheque/page.tsx b/src/app/actualites/bibliotheque/page.tsx
+index 58f0d11..4ed4b5b 100644
+--- a/src/app/actualites/bibliotheque/page.tsx
++++ b/src/app/actualites/bibliotheque/page.tsx
+@@ -7,10 +7,6 @@ import Footer from "@/src/components/Footer";
+ 
+ import { motion } from "framer-motion";
+ 
+-import { Music2 } from "lucide-react";
+-import { FaLinkedin, FaInstagram } from "react-icons/fa6";
+-import { FaFacebook } from "react-icons/fa";
+-
+ const fadeUp = {
+   hidden: { opacity: 0, y: 50 },
+   show: { opacity: 1, y: 0 },
+@@ -75,40 +71,7 @@ export default function Bibliotheque() {
+         viewport={{ once: false }}
+         transition={{ duration: 1 }}
+       >
+-        <Footer
+-          logo="/assets/logos/logoo.png"
+-          description="Notre mission : détecter, accompagner et propulser la jeunesse africaine vers le succès."
+-          links={[
+-            { label: "Bibliothèque", href: "#" },
+-            { label: "Évènements", href: "/actualites/evenements" },
+-            { label: "Projets", href: "/projets" },
+-            { label: "Blog", href: "/actualites/blog" },
+-            { label: "Contacts", href: "/contacts" },
+-            { label: "À propos", href: "/a-propos" },
+-          ]}
+-          socials={[
+-            {
+-              icon: <FaFacebook size={18} />,
+-              href: "https://facebook.com",
+-              target: "_blank",
+-            },
+-            {
+-              icon: <FaInstagram size={18} />,
+-              href: "https://instagram.com",
+-              target: "_blank",
+-            },
+-            {
+-              icon: <FaLinkedin size={18} />,
+-              href: "https://linkedin.com",
+-              target: "_blank",
+-            },
+-            {
+-              icon: <Music2 size={18} />,
+-              href: "https://tiktok.com",
+-              target: "_blank",
+-            },
+-          ]}
+-        />
++        <Footer />
+       </motion.section>
+ 
+     </motion.main>
+diff --git a/src/app/actualites/blog/[slug]/page.tsx b/src/app/actualites/blog/[slug]/page.tsx
+index 74757b1..a58972c 100644
+--- a/src/app/actualites/blog/[slug]/page.tsx
++++ b/src/app/actualites/blog/[slug]/page.tsx
+@@ -5,9 +5,6 @@ import Navbar from "@/src/components/Navbar";
+ import Hero from "@/src/components/Hero";
+ import Footer from "@/src/components/Footer";
+ import Link from "next/link";
+-import { Music2 } from "lucide-react";
+-import { FaLinkedin, FaInstagram } from "react-icons/fa6";
+-import { FaFacebook } from "react-icons/fa";
+ 
+ type Props = {
+   params: Promise<{
+@@ -90,48 +87,16 @@ export default async function BlogDetail({ params }: Props) {
+             {post.content}
+           </div>
+ 
+-          <Link href="/actualites/blog">
+-            <button className="px-4 mt-8 text-sm text-white font-semibold bg-yellow-300 hover:bg-yellow-500 py-2 transition cursor-pointer rounded-xl scale-100 hover:scale-105">
+-              Retour aux blogs
+-            </button>
++          <Link
++            href="/actualites/blog"
++            className="inline-block px-4 mt-8 text-sm text-white font-semibold bg-yellow-300 hover:bg-yellow-500 py-2 transition cursor-pointer rounded-xl scale-100 hover:scale-105"
++          >
++            Retour aux blogs
+           </Link>
+         </article>
+       </main>
+ 
+-      <Footer
+-        logo="/assets/logos/logoo.png"
+-        description="Notre mission : détecter, accompagner et propulser la jeunesse africaine vers le succès."
+-        links={[
+-          { label: "Bibliothèque", href: "/actualites/bibliotheque" },
+-          { label: "Évènements", href: "/actualites/evenements" },
+-          { label: "Projets", href: "/projets" },
+-          { label: "Blog", href: "/actualites/blog" },
+-          { label: "Contacts", href: "/contacts" },
+-          { label: "À propos", href: "/a-propos" },
+-        ]}
+-        socials={[
+-          {
+-            icon: <FaFacebook size={18} />,
+-            href: "https://www.facebook.com/habib.aboukhedoud?rdid=Qlwp9rC6zFwqE4bA&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F1BvTBznrbT%2F#",
+-            target: "_blank",
+-          },
+-          {
+-            icon: <FaInstagram size={18} />,
+-            href: "https://instagram.com/habib_aboukhedoud?igsh=MWxheWNzenFpeWl4Yg==",
+-            target: "_blank",
+-          },
+-          {
+-            icon: <FaLinkedin size={18} />,
+-            href: "https://www.linkedin.com/in/habib-aboukhedoud-b7044a186?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app",
+-            target: "_blank",
+-          },
+-          {
+-            icon: <Music2 size={18} />,
+-            href: "https://www.tiktok.com/@habibaboukhedoud?_r=1&_t=ZM-923QmkKsrxT",
+-            target: "_blank",
+-          },
+-        ]}
+-      />
++      <Footer />
+     </>
+   );
+ }
+\ No newline at end of file
+diff --git a/src/app/actualites/blog/page.tsx b/src/app/actualites/blog/page.tsx
+index 9c2c0d1..2ab7274 100644
+--- a/src/app/actualites/blog/page.tsx
++++ b/src/app/actualites/blog/page.tsx
+@@ -1,27 +1,26 @@
+-
++import type { Metadata } from "next";
+ import Navbar from "@/src/components/Navbar";
+ import Hero from "@/src/components/Hero";
+-import Blogs from "@/src/components/Blog";
+ import Footer from "@/src/components/Footer";
+ import BlogContent from '@/src/components/blogContent';
+ 
+-
+ import {
+   MotionMain,
+   MotionSection,
+ } from "@/src/components/motionWrapper";
+ 
+-import { Music2 } from "lucide-react";
+-import { FaLinkedin, FaInstagram } from "react-icons/fa6";
+-import { FaFacebook } from "react-icons/fa";
+-
+ const fadeUp = {
+   hidden: { opacity: 0, y: 60 },
+   show: { opacity: 1, y: 0 },
+ };
+ 
++export const metadata: Metadata = {
++  title: "Blog",
++  description:
++    "Articles, conseils et retours d’expérience pour aider la jeunesse africaine à entreprendre et à réussir.",
++};
+ 
+-export default async function Page() {
++export default function Page() {
+ 
+   return (
+     <MotionMain className="overflow-x-hidden">
+@@ -61,40 +60,7 @@ export default async function Page() {
+         viewport={{ once: false }}
+         transition={{ duration: 1 }}
+       >
+-        <Footer
+-          logo="/assets/logos/logoo.png"
+-          description="Notre mission : détecter, accompagner et propulser la jeunesse africaine vers le succès."
+-          links={[
+-            { label: "Bibliothèque", href: "/actualites/bibliotheque" },
+-            { label: "Évènements", href: "/actualites/evenements" },
+-            { label: "Projets", href: "/projets" },
+-            { label: "Blog", href: "#" },
+-            { label: "Contacts", href: "/contacts" },
+-            { label: "À propos", href: "/a-propos" },
+-          ]}
+-          socials={[
+-            {
+-              icon: <FaFacebook size={18} />,
+-              href: "https://facebook.com",
+-              target: "_blank",
+-            },
+-            {
+-              icon: <FaInstagram size={18} />,
+-              href: "https://instagram.com",
+-              target: "_blank",
+-            },
+-            {
+-              icon: <FaLinkedin size={18} />,
+-              href: "https://linkedin.com",
+-              target: "_blank",
+-            },
+-            {
+-              icon: <Music2 size={18} />,
+-              href: "https://tiktok.com",
+-              target: "_blank",
+-            },
+-          ]}
+-        />
++        <Footer />
+       </MotionSection>
+ 
+     </MotionMain>
+diff --git a/src/app/actualites/evenements/[slug]/page.tsx b/src/app/actualites/evenements/[slug]/page.tsx
+index 2ad8666..99401db 100644
+--- a/src/app/actualites/evenements/[slug]/page.tsx
++++ b/src/app/actualites/evenements/[slug]/page.tsx
+@@ -5,9 +5,6 @@ import Hero from "@/src/components/Hero";
+ import EventDetail from "@/src/components/detailEvent";
+ import { events } from "@/src/data/event";
+ import Footer from "@/src/components/Footer";
+-import { Music2 } from "lucide-react";
+-import { FaLinkedin, FaInstagram } from "react-icons/fa6";
+-import { FaFacebook } from "react-icons/fa";
+ 
+ type Props = {
+   params: Promise<{
+@@ -78,40 +75,7 @@ export default async function EventDetailPage({
+ 
+       <EventDetail event={event} />
+ 
+-      <Footer
+-        logo="/assets/logos/logoo.png"
+-        description="Notre mission : détecter, accompagner et propulser la jeunesse africaine vers le succès."
+-        links={[
+-          { label: "Bibliothèque", href: "/actualites/bibliotheque" },
+-          { label: "Évènements", href: "/actualites/evenements" },
+-          { label: "Projets", href: "/projets" },
+-          { label: "Blog", href: "/actualites/blog" },
+-          { label: "Contacts", href: "/contacts" },
+-          { label: "À propos", href: "/a-propos" },
+-        ]}
+-        socials={[
+-          {
+-            icon: <FaFacebook size={18} />,
+-            href: "https://www.facebook.com/habib.aboukhedoud?rdid=Qlwp9rC6zFwqE4bA&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F1BvTBznrbT%2F#",
+-            target: "_blank",
+-          },
+-          {
+-            icon: <FaInstagram size={18} />,
+-            href: "https://instagram.com/habib_aboukhedoud?igsh=MWxheWNzenFpeWl4Yg==",
+-            target: "_blank",
+-          },
+-          {
+-            icon: <FaLinkedin size={18} />,
+-            href: "https://www.linkedin.com/in/habib-aboukhedoud-b7044a186?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app",
+-            target: "_blank",
+-          },
+-          {
+-            icon: <Music2 size={18} />,
+-            href: "https://www.tiktok.com/@habibaboukhedoud?_r=1&_t=ZM-923QmkKsrxT",
+-            target: "_blank",
+-          },
+-        ]}
+-      />
++      <Footer />
+     </main>
+   );
+ }
+\ No newline at end of file
+diff --git a/src/app/actualites/evenements/layout.tsx b/src/app/actualites/evenements/layout.tsx
+new file mode 100644
+index 0000000..4fc4236
+--- /dev/null
++++ b/src/app/actualites/evenements/layout.tsx
+@@ -0,0 +1,11 @@
++import type { Metadata } from "next";
++
++export const metadata: Metadata = {
++  title: "Évènements",
++  description:
++    "Conférences, ateliers et rencontres organisés avec le Commandant Habib Aboukhedoud et les jeunes du Bénin.",
++};
++
++export default function Layout({ children }: { children: React.ReactNode }) {
++  return children;
++}
+diff --git a/src/app/actualites/evenements/page.tsx b/src/app/actualites/evenements/page.tsx
+index ce21cc0..cf84ec5 100644
+--- a/src/app/actualites/evenements/page.tsx
++++ b/src/app/actualites/evenements/page.tsx
+@@ -8,10 +8,6 @@ import Footer from "@/src/components/Footer";
+ 
+ import { motion } from "framer-motion";
+ 
+-import { Music2 } from "lucide-react";
+-import { FaLinkedin, FaInstagram } from "react-icons/fa6";
+-import { FaFacebook } from "react-icons/fa";
+-
+ const fadeUp = {
+   hidden: {
+     opacity: 0,
+@@ -23,18 +19,7 @@ const fadeUp = {
+   },
+ };
+ 
+-const fadeLeft = {
+-  hidden: {
+-    opacity: 0,
+-    x: -40,
+-  },
+-  show: {
+-    opacity: 1,
+-    x: 0,
+-  },
+-};
+-
+-export default function Projet() {
++export default function Evenements() {
+   return (
+     <motion.main
+       className="overflow-x-hidden"
+@@ -110,40 +95,7 @@ export default function Projet() {
+         viewport={{ once: false }}
+         transition={{ duration: 1 }}
+       >
+-        <Footer
+-          logo="/assets/logos/logoo.png"
+-          description="Notre mission : détecter, accompagner et propulser la jeunesse africaine vers le succès."
+-          links={[
+-            { label: "Bibliothèque", href: "/actualites/bibliotheque" },
+-            { label: "Évènements", href: "#" },
+-            { label: "Projets", href: "/projets" },
+-            { label: "Blog", href: "/actualites/blog" },
+-            { label: "Contacts", href: "/contacts" },
+-            { label: "À propos", href: "/a-propos" },
+-          ]}
+-          socials={[
+-            {
+-              icon: <FaFacebook size={18} />,
+-              href: "https://www.facebook.com/habib.aboukhedoud",
+-              target: "_blank",
+-            },
+-            {
+-              icon: <FaInstagram size={18} />,
+-              href: "https://instagram.com/habib_aboukhedoud",
+-              target: "_blank",
+-            },
+-            {
+-              icon: <FaLinkedin size={18} />,
+-              href: "https://www.linkedin.com/in/habib-aboukhedoud-b7044a186",
+-              target: "_blank",
+-            },
+-            {
+-              icon: <Music2 size={18} />,
+-              href: "https://www.tiktok.com/@habibaboukhedoud",
+-              target: "_blank",
+-            },
+-          ]}
+-        />
++        <Footer />
+       </motion.section>
+     </motion.main>
+   );
+diff --git a/src/app/api/contact/route.ts b/src/app/api/contact/route.ts
+index 01107f5..bc1fdba 100644
+--- a/src/app/api/contact/route.ts
++++ b/src/app/api/contact/route.ts
+@@ -1,54 +1,134 @@
+ import nodemailer from "nodemailer";
+ 
++// nodemailer a besoin du runtime Node.js (pas de l'Edge runtime).
++export const runtime = "nodejs";
++
++type ContactPayload = {
++  prenoms: string;
++  nom: string;
++  email: string;
++  objet: string;
++  message: string;
++  isInBenin: string;
++  departement: string;
++  pays: string;
++};
++
++const MAX_LENGTHS: Record<keyof ContactPayload, number> = {
++  prenoms: 100,
++  nom: 100,
++  email: 200,
++  objet: 200,
++  message: 5000,
++  isInBenin: 3,
++  departement: 50,
++  pays: 100,
++};
++
++const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
++
++// Échappe le HTML pour éviter toute injection dans l'email reçu.
++function escapeHtml(value: string): string {
++  return value
++    .replace(/&/g, "&amp;")
++    .replace(/</g, "&lt;")
++    .replace(/>/g, "&gt;")
++    .replace(/"/g, "&quot;")
++    .replace(/'/g, "&#39;");
++}
++
++function parsePayload(body: unknown): { data?: ContactPayload; error?: string } {
++  if (!body || typeof body !== "object") return { error: "Requête invalide" };
++
++  const raw = body as Record<string, unknown>;
++  const data = {} as ContactPayload;
++
++  for (const key of Object.keys(MAX_LENGTHS) as (keyof ContactPayload)[]) {
++    const value = raw[key];
++    const str = typeof value === "string" ? value.trim() : "";
++    if (str.length > MAX_LENGTHS[key]) return { error: `Champ « ${key} » trop long` };
++    data[key] = str;
++  }
++
++  if (!data.prenoms || !data.nom || !data.objet || !data.message) {
++    return { error: "Champs obligatoires manquants" };
++  }
++  if (!EMAIL_REGEX.test(data.email)) return { error: "Email invalide" };
++
++  return { data };
++}
++
+ export async function POST(req: Request) {
++  const { EMAIL_USER, EMAIL_PASS, EMAIL_RECEIVER } = process.env;
++
++  if (!EMAIL_USER || !EMAIL_PASS) {
++    console.error("[contact] EMAIL_USER / EMAIL_PASS non configurés");
++    return Response.json(
++      { error: "Service de messagerie non configuré" },
++      { status: 500 }
++    );
++  }
++
++  let body: unknown;
+   try {
+-    const body = await req.json();
++    body = await req.json();
++  } catch {
++    return Response.json({ error: "Requête invalide" }, { status: 400 });
++  }
++
++  const { data, error } = parsePayload(body);
++  if (!data) {
++    return Response.json({ error }, { status: 400 });
++  }
++
++  const e = (v: string) => escapeHtml(v);
+ 
++  const localisation =
++    data.isInBenin === "oui"
++      ? `Bénin${data.departement ? ` — ${e(data.departement)}` : ""}`
++      : data.isInBenin === "non"
++        ? e(data.pays || "Hors Bénin")
++        : "Non précisée";
++
++  try {
+     const transporter = nodemailer.createTransport({
+       service: "gmail",
+-      auth: {
+-        user: process.env.EMAIL_USER,
+-        pass: process.env.EMAIL_PASS,
+-      },
++      auth: { user: EMAIL_USER, pass: EMAIL_PASS },
+     });
+ 
+     await transporter.sendMail({
+-      from: `"Site Web" <${process.env.EMAIL_USER}>`,
+-      replyTo: body.email,
+-      to: process.env.EMAIL_USER,
+-      subject: `Nouveau message : ${body.objet}`,
+-
++      from: `"Site Web" <${EMAIL_USER}>`,
++      replyTo: data.email,
++      to: EMAIL_RECEIVER || EMAIL_USER,
++      // Pas de retour à la ligne dans le sujet (en-tête SMTP).
++      subject: `Nouveau message : ${data.objet.replace(/[\r\n]+/g, " ")}`,
++      text: [
++        `Nom : ${data.nom}`,
++        `Prénoms : ${data.prenoms}`,
++        `Email : ${data.email}`,
++        `Localisation : ${data.isInBenin === "oui" ? `Bénin ${data.departement}` : data.pays || "Non précisée"}`,
++        `Objet : ${data.objet}`,
++        "",
++        data.message,
++      ].join("\n"),
+       html: `
+         <div style="font-family: Arial, sans-serif; padding:20px;">
+-          
+           <h2 style="color:#1e3a8a;">Nouveau message reçu</h2>
+ 
+-          <p><b>Nom :</b> ${body.nom}</p>
+-          <p><b>Prénoms :</b> ${body.prenoms}</p>
+-          <p><b>Email :</b> ${body.email}</p>
+-          <p><b>Objet :</b> ${body.objet}</p>
+-
+-          <div style="
+-            margin-top:15px;
+-            padding:15px;
+-            background:#f3f4f6;
+-            border-radius:8px;
+-          ">
+-            ${body.message}
+-          </div>
++          <p><b>Nom :</b> ${e(data.nom)}</p>
++          <p><b>Prénoms :</b> ${e(data.prenoms)}</p>
++          <p><b>Email :</b> ${e(data.email)}</p>
++          <p><b>Localisation :</b> ${localisation}</p>
++          <p><b>Objet :</b> ${e(data.objet)}</p>
+ 
++          <div style="margin-top:15px; padding:15px; background:#f3f4f6; border-radius:8px; white-space:pre-wrap;">${e(data.message)}</div>
+         </div>
+       `,
+     });
+ 
+     return Response.json({ success: true });
+-
+-  } catch (error) {
+-    console.log(error);
+-
+-    return Response.json(
+-      { error: "Erreur serveur" },
+-      { status: 500 }
+-    );
++  } catch (err) {
++    console.error("[contact] Échec de l'envoi :", err);
++    return Response.json({ error: "Erreur serveur" }, { status: 500 });
+   }
+-}
+\ No newline at end of file
++}
+diff --git a/src/app/contacts/layout.tsx b/src/app/contacts/layout.tsx
+new file mode 100644
+index 0000000..b38b838
+--- /dev/null
++++ b/src/app/contacts/layout.tsx
+@@ -0,0 +1,11 @@
++import type { Metadata } from "next";
++
++export const metadata: Metadata = {
++  title: "Contacts",
++  description:
++    "Contactez l’équipe d’« Ensemble, on décolle » pour soumettre votre projet, devenir partenaire ou rejoindre la communauté.",
++};
++
++export default function Layout({ children }: { children: React.ReactNode }) {
++  return children;
++}
+diff --git a/src/app/contacts/page.tsx b/src/app/contacts/page.tsx
+index 44acc48..d830943 100644
+--- a/src/app/contacts/page.tsx
++++ b/src/app/contacts/page.tsx
+@@ -8,10 +8,6 @@ import Footer from "@/src/components/Footer";
+ 
+ import { motion } from "framer-motion";
+ 
+-import { Music2 } from "lucide-react";
+-import { FaLinkedin, FaInstagram } from "react-icons/fa6";
+-import { FaFacebook } from "react-icons/fa";
+-
+ const fadeUp = {
+   hidden: { opacity: 0, y: 50 },
+   show: { opacity: 1, y: 0 },
+@@ -66,40 +62,7 @@ export default function Contactez() {
+         viewport={{ once: false }}
+         transition={{ duration: 1 }}
+       >
+-        <Footer
+-          logo="/assets/logos/logoo.png"
+-          description="Notre mission : détecter, accompagner et propulser la jeunesse africaine vers le succès."
+-          links={[
+-            { label: "Bibliothèque", href: "/actualites/bibliotheque" },
+-            { label: "Évènements", href: "/actualites/evenements" },
+-            { label: "Projets", href: "/projets" },
+-            { label: "Blog", href: "/actualites/blog" },
+-            { label: "Contacts", href: "#" },
+-            { label: "À propos", href: "/a-propos" },
+-          ]}
+-          socials={[
+-            {
+-              icon: <FaFacebook size={18} />,
+-              href: "https://facebook.com",
+-              target: "_blank",
+-            },
+-            {
+-              icon: <FaInstagram size={18} />,
+-              href: "https://instagram.com",
+-              target: "_blank",
+-            },
+-            {
+-              icon: <FaLinkedin size={18} />,
+-              href: "https://linkedin.com",
+-              target: "_blank",
+-            },
+-            {
+-              icon: <Music2 size={18} />,
+-              href: "https://tiktok.com",
+-              target: "_blank",
+-            },
+-          ]}
+-        />
++        <Footer />
+       </motion.section>
+ 
+     </motion.main>
+diff --git a/src/app/layout.tsx b/src/app/layout.tsx
+index f95e660..4db2041 100644
+--- a/src/app/layout.tsx
++++ b/src/app/layout.tsx
+@@ -1,9 +1,10 @@
+ import "./globals.css";
+ import { Poppins } from "next/font/google";
+-import Analytics from "@/src/components/analytic";
+ import type { Metadata } from "next";
+-import SEO from "@/src/config/next-seo.config";
+ import Script from "next/script";
++import Analytics from "@/src/components/analytic";
++import { GA_MEASUREMENT_ID } from "@/src/lib/gtag";
++import { siteConfig } from "@/src/config/site";
+ 
+ const poppins = Poppins({
+   subsets: ["latin"],
+@@ -11,54 +12,41 @@ const poppins = Poppins({
+ });
+ 
+ export const metadata: Metadata = {
+-  title: "Fondation Habib",
+-
+-  description:
+-    "Plateforme officielle de la Fondation Habib dédiée à la jeunesse, l’innovation et l’entrepreneuriat.",
+-
+-  keywords: [
+-    "Fondation",
+-    "Jeunesse",
+-    "Entrepreneuriat",
+-    "Bénin",
+-  ],
++  // Permet d'utiliser des chemins relatifs pour les images Open Graph / Twitter.
++  metadataBase: new URL(siteConfig.url),
+ 
+-  openGraph: {
+-    title: "Fondation Habib",
+-
+-    description:
+-      "Plateforme officielle de la Fondation Habib.",
++  title: {
++    default: siteConfig.name,
++    template: `%s | ${siteConfig.name}`,
++  },
+ 
+-    url: "https://monsite.com",
++  description: siteConfig.description,
+ 
+-    siteName: "Fondation Habib",
++  keywords: ["Fondation", "Jeunesse", "Entrepreneuriat", "Bénin", "Ensemble on décolle"],
+ 
++  openGraph: {
++    title: siteConfig.name,
++    description: siteConfig.description,
++    url: "/",
++    siteName: siteConfig.name,
+     images: [
+       {
+-        url: "/assets/images/cover.jpg",
+-        width: 1200,
+-        height: 630,
+-        alt: "Fondation Habib",
++        url: siteConfig.ogImage,
++        alt: siteConfig.name,
+       },
+     ],
+-
+     locale: "fr_FR",
+     type: "website",
+   },
+ 
+   twitter: {
+     card: "summary_large_image",
+-
+-    title: "Fondation Habib",
+-
+-    description:
+-      "Plateforme officielle de la Fondation Habib.",
+-
+-    images: ["/assets/images/cover.jpg"],
++    title: siteConfig.name,
++    description: siteConfig.description,
++    images: [siteConfig.ogImage],
+   },
+ };
+ 
+-
+ export default function RootLayout({
+   children,
+ }: {
+@@ -66,37 +54,26 @@ export default function RootLayout({
+ }) {
+   return (
+     <html lang="fr">
+-
+-      <head>
+-
+-        {/* GOOGLE ANALYTICS SCRIPT */}
+-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-QNVS3YYHHR"></script>
+-
+-
+-        {/* GOOGLE ANALYTICS CONFIG */}
++      <body className={poppins.className}>
++        {/* GOOGLE ANALYTICS */}
++        <Script
++          src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
++          strategy="afterInteractive"
++        />
+         <Script id="google-analytics" strategy="afterInteractive">
+           {`
+             window.dataLayer = window.dataLayer || [];
+-
+-            function gtag(){
+-              dataLayer.push(arguments);
+-            }
+-
++            function gtag(){ dataLayer.push(arguments); }
++            window.gtag = gtag;
+             gtag('js', new Date());
+-
+-            gtag('config', 'G-QNVS3YYHHR');
++            gtag('config', '${GA_MEASUREMENT_ID}');
+           `}
+         </Script>
+ 
+-      </head>
+-
+-      <body className={poppins.className}>
+-
+         <Analytics />
+ 
+         {children}
+-
+       </body>
+     </html>
+   );
+-}
+\ No newline at end of file
++}
+diff --git a/src/app/page.tsx b/src/app/page.tsx
+index 082bf0a..bac81cb 100644
+--- a/src/app/page.tsx
++++ b/src/app/page.tsx
+@@ -15,16 +15,10 @@ import { motion } from "framer-motion";
+ 
+ import {
+   fadeUp,
+-  fadeLeft,
+-  fadeRight,
+   fadeIn,
+   scaleIn,
+ } from "@/src/utils/animation";
+ 
+-import { Music2 } from "lucide-react";
+-import { FaLinkedin, FaInstagram } from "react-icons/fa6";
+-import { FaFacebook } from "react-icons/fa";
+-
+ export default function Home() {
+   return (
+     <main className="overflow-hidden">
+@@ -149,40 +143,7 @@ export default function Home() {
+         whileInView="visible"
+         viewport={{ once: false, amount: 0.2 }}
+       >
+-        <Footer
+-          logo="/assets/logos/logoo.png"
+-          description="Notre mission : détecter, accompagner et propulser la jeunesse africaine vers le succès."
+-          links={[
+-            { label: "Bibliothèque", href: "/actualites/bibliotheque" },
+-            { label: "Évènements", href: "/actualites/evenements" },
+-            { label: "Projets", href: "/projets" },
+-            { label: "Blog", href: "/actualites/blog" },
+-            { label: "Contacts", href: "/contacts" },
+-            { label: "À propos", href: "/a-propos" },
+-          ]}
+-          socials={[
+-            {
+-              icon: <FaFacebook size={18} />,
+-              href: "https://www.facebook.com/habib.aboukhedoud",
+-              target: "_blank",
+-            },
+-            {
+-              icon: <FaInstagram size={18} />,
+-              href: "https://instagram.com/habib_aboukhedoud",
+-              target: "_blank",
+-            },
+-            {
+-              icon: <FaLinkedin size={18} />,
+-              href: "https://www.linkedin.com/in/habib-aboukhedoud-b7044a186",
+-              target: "_blank",
+-            },
+-            {
+-              icon: <Music2 size={18} />,
+-              href: "https://www.tiktok.com/@habibaboukhedoud",
+-              target: "_blank",
+-            },
+-          ]}
+-        />
++        <Footer />
+       </motion.footer>
+ 
+     </main>
+diff --git a/src/app/projets/[id]/page.tsx b/src/app/projets/[id]/page.tsx
+index 75a16af..a3aebbf 100644
+--- a/src/app/projets/[id]/page.tsx
++++ b/src/app/projets/[id]/page.tsx
+@@ -5,9 +5,6 @@ import Hero from "@/src/components/Hero";
+ import ProjetDetail from "@/src/components/projetDetail";
+ import { projects } from "@/src/data/project";
+ import Footer from "@/src/components/Footer";
+-import { Music2 } from "lucide-react";
+-import { FaLinkedin, FaInstagram } from "react-icons/fa6";
+-import { FaFacebook } from "react-icons/fa";
+ 
+ type Props = {
+   params: Promise<{
+@@ -15,6 +12,12 @@ type Props = {
+   }>;
+ };
+ 
++export async function generateStaticParams() {
++  return projects
++    .filter((p) => p.id)
++    .map((p) => ({ id: p.id as string }));
++}
++
+ export async function generateMetadata({
+   params,
+ }: Props): Promise<Metadata> {
+@@ -29,21 +32,25 @@ export async function generateMetadata({
+     };
+   }
+ 
++  // Description courte (les descriptions de projets sont longues et multi-lignes).
++  const description = projet.description.trim().replace(/\s+/g, " ").slice(0, 160);
++  const images = projet.image ? [projet.image] : undefined;
++
+   return {
+     title: `${projet.title} | Projets`,
+-    description: projet.description,
++    description,
+ 
+     openGraph: {
+       title: projet.title,
+-      description: projet.description,
+-      images: [projet.image || ""],
++      description,
++      images,
+     },
+ 
+     twitter: {
+       card: "summary_large_image",
+       title: projet.title,
+-      description: projet.description,
+-      images: [projet.image || ""],
++      description,
++      images,
+     },
+   };
+ }
+@@ -72,40 +79,7 @@ export default async function Projet({
+         description={projet.description}
+       />
+ 
+-      <Footer
+-        logo="/assets/logos/logoo.png"
+-        description="Notre mission : détecter, accompagner et propulser la jeunesse africaine vers le succès."
+-        links={[
+-          { label: "Bibliothèque", href: "/actualites/bibliotheque" },
+-          { label: "Évènements", href: "/actualites/evenements" },
+-          { label: "Projets", href: "/projets" },
+-          { label: "Blog", href: "/actualites/blog" },
+-          { label: "Contacts", href: "/contacts" },
+-          { label: "À propos", href: "/a-propos" },
+-        ]}
+-        socials={[
+-          {
+-            icon: <FaFacebook size={18} />,
+-            href: "https://www.facebook.com/habib.aboukhedoud?rdid=Qlwp9rC6zFwqE4bA&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F1BvTBznrbT%2F#",
+-            target: "_blank",
+-          },
+-          {
+-            icon: <FaInstagram size={18} />,
+-            href: "https://instagram.com/habib_aboukhedoud?igsh=MWxheWNzenFpeWl4Yg==",
+-            target: "_blank",
+-          },
+-          {
+-            icon: <FaLinkedin size={18} />,
+-            href: "https://www.linkedin.com/in/habib-aboukhedoud-b7044a186?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app",
+-            target: "_blank",
+-          },
+-          {
+-            icon: <Music2 size={18} />,
+-            href: "https://www.tiktok.com/@habibaboukhedoud?_r=1&_t=ZM-923QmkKsrxT",
+-            target: "_blank",
+-          },
+-        ]}
+-      />
++      <Footer />
+     </main>
+   );
+ }
+\ No newline at end of file
+diff --git a/src/app/projets/layout.tsx b/src/app/projets/layout.tsx
+new file mode 100644
+index 0000000..180e338
+--- /dev/null
++++ b/src/app/projets/layout.tsx
+@@ -0,0 +1,11 @@
++import type { Metadata } from "next";
++
++export const metadata: Metadata = {
++  title: "Projets",
++  description:
++    "Les projets portés par « Ensemble, on décolle » pour accompagner, connecter et propulser la jeunesse africaine.",
++};
++
++export default function Layout({ children }: { children: React.ReactNode }) {
++  return children;
++}
+diff --git a/src/app/projets/page.tsx b/src/app/projets/page.tsx
+index 25eacd4..4c876ea 100644
+--- a/src/app/projets/page.tsx
++++ b/src/app/projets/page.tsx
+@@ -7,10 +7,6 @@ import Footer from "@/src/components/Footer";
+ 
+ import { motion } from "framer-motion";
+ 
+-import { Music2 } from "lucide-react";
+-import { FaLinkedin, FaInstagram } from "react-icons/fa6";
+-import { FaFacebook } from "react-icons/fa";
+-
+ const fadeUp = {
+   hidden: {
+     opacity: 0,
+@@ -67,40 +63,7 @@ export default function Projet() {
+         viewport={{ once: false }}
+         transition={{ duration: 1 }}
+       >
+-        <Footer
+-          logo="/assets/logos/logoo.png"
+-          description="Notre mission : détecter, accompagner et propulser la jeunesse africaine vers le succès."
+-          links={[
+-            { label: "Bibliothèque", href: "/actualites/bibliotheque" },
+-            { label: "Évènements", href: "/actualites/evenements" },
+-            { label: "Projets", href: "#" },
+-            { label: "Blog", href: "/actualites/blog" },
+-            { label: "Contacts", href: "/contacts" },
+-            { label: "À propos", href: "/a-propos" },
+-          ]}
+-          socials={[
+-            {
+-              icon: <FaFacebook size={18} />,
+-              href: "https://www.facebook.com/habib.aboukhedoud?rdid=Qlwp9rC6zFwqE4bA&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F1BvTBznrbT%2F#",
+-              target: "_blank",
+-            },
+-            {
+-              icon: <FaInstagram size={18} />,
+-              href: "https://instagram.com/habib_aboukhedoud?igsh=MWxheWNzenFpeWl4Yg==",
+-              target: "_blank",
+-            },
+-            {
+-              icon: <FaLinkedin size={18} />,
+-              href: "https://www.linkedin.com/in/habib-aboukhedoud-b7044a186",
+-              target: "_blank",
+-            },
+-            {
+-              icon: <Music2 size={18} />,
+-              href: "https://www.tiktok.com/@habibaboukhedoud",
+-              target: "_blank",
+-            },
+-          ]}
+-        />
++        <Footer />
+       </motion.div>
+     </motion.main>
+   );
+diff --git a/src/app/usePageTracking.ts b/src/app/usePageTracking.ts
+index f68878e..cb9d32e 100644
+--- a/src/app/usePageTracking.ts
++++ b/src/app/usePageTracking.ts
+@@ -1,19 +1,23 @@
+ "use client";
+ 
+ import { usePathname, useSearchParams } from "next/navigation";
+-import { useEffect } from "react";
++import { useEffect, useRef } from "react";
++import { pageview } from "@/src/lib/gtag";
+ 
+ export default function usePageTracking() {
+   const pathname = usePathname();
+   const searchParams = useSearchParams();
++  const isFirstRender = useRef(true);
+ 
+   useEffect(() => {
+-    const url = pathname + searchParams.toString();
+-
+-if (typeof window !== "undefined" && window.gtag) {
+-  window.gtag("config", "G-QNVS3YYHHR", {
+-            page_path: url,
+-        });
++    // La première page vue est déjà envoyée par gtag('config') dans le layout :
++    // on ne la renvoie pas pour éviter de la compter deux fois.
++    if (isFirstRender.current) {
++      isFirstRender.current = false;
++      return;
+     }
++
++    const query = searchParams.toString();
++    pageview(query ? `${pathname}?${query}` : pathname);
+   }, [pathname, searchParams]);
+-}
+\ No newline at end of file
++}
+diff --git a/src/components/Blog.tsx b/src/components/Blog.tsx
+index bd0fca8..0d05408 100644
+--- a/src/components/Blog.tsx
++++ b/src/components/Blog.tsx
+@@ -6,15 +6,17 @@ type Props = {
+   page?: string ;
+ };
+ 
+-
+ export default function Blog({ page }: Props) {
+   
+   const postsPerPage = 6;
+ 
+-  const currentPage = parseInt(page || "1", 10);
+-  
++  const totalPages = Math.max(1, Math.ceil(blogPosts.length / postsPerPage));
+ 
+-  const totalPages = Math.ceil(blogPosts.length / postsPerPage);
++  // Une valeur invalide (?page=abc, ?page=999) ne doit pas afficher une page vide.
++  const parsedPage = parseInt(page || "1", 10);
++  const currentPage = Number.isNaN(parsedPage)
++    ? 1
++    : Math.min(Math.max(parsedPage, 1), totalPages);
+ 
+   const startIndex = (currentPage - 1) * postsPerPage;
+   const currentPosts = blogPosts.slice(
+@@ -26,9 +28,9 @@ export default function Blog({ page }: Props) {
+     <section className="bg-gray-100 py-16">
+       <div className="max-w-7xl mx-auto px-4">
+ 
+-        <h1 className="text-3xl font-bold text-center text-blue-900 mb-12">
++        <h2 className="text-3xl font-bold text-center text-blue-900 mb-12">
+           NOS ARTICLES
+-        </h1>
++        </h2>
+ 
+         {/* Articles */}
+         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+@@ -46,6 +48,7 @@ export default function Blog({ page }: Props) {
+             <Link 
+                 key={page}
+                 href={`/actualites/blog?page=${page}`}
++                aria-current={currentPage === page ? "page" : undefined}
+                 className={`w-10 h-10 flex items-center justify-center rounded-md border ${
+                     currentPage === page
+                     ? "bg-yellow-400 text-white"
+diff --git a/src/components/Footer.tsx b/src/components/Footer.tsx
+index 2e63896..d043290 100644
+--- a/src/components/Footer.tsx
++++ b/src/components/Footer.tsx
+@@ -1,30 +1,20 @@
+ import Image from "next/image";
+-import { memo } from "react";
+-
+-type FooterLink = {
+-  label: string;
+-  href: string;
+-};
+-
+-type Social = {
+-  icon: React.ReactNode;
+-  href: string;
+-  target?: string;
+-};
+-
+-type Props = {
+-  logo: string;
+-  description: string;
+-  links: FooterLink[];
+-  socials: Social[];
+-};
+-
+-function Footer({
+-  logo,
+-  description,
+-  links,
+-  socials,
+-}: Props) {
++import Link from "next/link";
++import { Music2 } from "lucide-react";
++import { FaLinkedin, FaInstagram } from "react-icons/fa6";
++import { FaFacebook } from "react-icons/fa";
++import { navLinks, siteConfig } from "@/src/config/site";
++
++const socials = [
++  { label: "Facebook", icon: <FaFacebook size={18} />, href: siteConfig.socials.facebook },
++  { label: "Instagram", icon: <FaInstagram size={18} />, href: siteConfig.socials.instagram },
++  { label: "LinkedIn", icon: <FaLinkedin size={18} />, href: siteConfig.socials.linkedin },
++  { label: "TikTok", icon: <Music2 size={18} />, href: siteConfig.socials.tiktok },
++];
++
++export default function Footer() {
++  const year = new Date().getFullYear();
++
+   return (
+     <footer className="bg-[#1f2a5a] text-white pt-16 pb-8">
+       <div className="max-w-7xl mx-auto px-4 md:px-8">
+@@ -35,29 +25,30 @@ function Footer({
+           <div className="mt-4">
+ 
+             <div className="flex items-center gap-3 mb-2">
+-              <a href="#">
++              <Link href="/" aria-label="Accueil">
+                 <Image
+-                  src={logo}
+-                  alt="logo"
++                  src={siteConfig.logo}
++                  alt={siteConfig.movement}
+                   width={250}
+                   height={250}
+-                  priority
+                   className="-mx-8 -mt-12 md:-mx-8 md:-mt-12"
+                 />
+-              </a>
++              </Link>
+             </div>
+ 
+             <p className="text-gray-300 text-sm mb-4">
+-              {description}
++              {siteConfig.mission}
+             </p>
+ 
+             {/* Socials */}
+             <div className="flex gap-4">
+-              {socials.map((social, index) => (
++              {socials.map((social) => (
+                 <a
+-                  key={index}
++                  key={social.label}
+                   href={social.href}
+-                  target={social.target}
++                  target="_blank"
++                  rel="noopener noreferrer"
++                  aria-label={social.label}
+                   className="text-gray-300 hover:text-white transition"
+                 >
+                   {social.icon}
+@@ -75,18 +66,16 @@ function Footer({
+             </h3>
+ 
+             <ul className="space-y-2 text-gray-300 text-sm">
+-
+-              {links.map((link, index) => (
+-                <li key={index}>
+-                  <a
++              {navLinks.map((link) => (
++                <li key={link.href}>
++                  <Link
+                     href={link.href}
+                     className="hover:text-white transition"
+                   >
+                     {link.label}
+-                  </a>
++                  </Link>
+                 </li>
+               ))}
+-
+             </ul>
+           </div>
+ 
+@@ -94,11 +83,11 @@ function Footer({
+           <div>
+ 
+             <h3 className="text-lg mb-4 text-gray-300">
+-              N'hésitez pas à nous contacter pour discuter de vos projets
++              N&apos;hésitez pas à nous contacter pour discuter de vos projets
+               et découvrir comment nous pouvons vous aider.
+             </h3>
+ 
+-            <a
++            <Link
+               href="/contacts"
+               className="
+                 inline-block
+@@ -113,19 +102,17 @@ function Footer({
+               "
+             >
+               NOUS CONTACTER
+-            </a>
++            </Link>
+ 
+           </div>
+         </div>
+ 
+         {/* Bottom */}
+         <div className="border-t border-gray-600 pt-6 text-center text-sm text-gray-400">
+-          © 2026 Ensemble, on décolle. Tous droits réservés
++          © {year} {siteConfig.movement}. Tous droits réservés
+         </div>
+ 
+       </div>
+     </footer>
+   );
+ }
+-
+-export default memo(Footer);
+\ No newline at end of file
+diff --git a/src/components/Header.tsx b/src/components/Header.tsx
+deleted file mode 100644
+index e69de29..0000000
+diff --git a/src/components/Hero.tsx b/src/components/Hero.tsx
+index a94aa4e..b950285 100644
+--- a/src/components/Hero.tsx
++++ b/src/components/Hero.tsx
+@@ -1,6 +1,7 @@
+ "use client";
+ 
+ import Image from "next/image";
++import Link from "next/link";
+ import { motion } from "framer-motion";
+ import { memo } from "react";
+ 
+@@ -10,6 +11,7 @@ type Props = {
+   subtitle?: string;
+   description?: string;
+   buttonText?: string;
++  buttonHref?: string;
+   image: string;
+   overlay?: boolean;
+ };
+@@ -20,6 +22,7 @@ function Hero({
+   subtitle = "",
+   description = "",
+   buttonText = "",
++  buttonHref = "/contacts",
+   image = "",
+   overlay = true,
+ }: Props) {
+@@ -36,8 +39,9 @@ function Hero({
+       >
+         <Image
+           src={image}
+-          alt="hero"
++          alt=""
+           fill
++          sizes="100vw"
+           className="object-cover"
+           priority
+         />
+@@ -57,15 +61,17 @@ function Hero({
+       {/* Content */}
+       <div className="relative z-10 max-w-3xl px-4">
+ 
+-        <motion.p
+-          initial={{ opacity: 0, y: 40 }}
+-          whileInView={{ opacity: 1, y: 0 }}
+-          viewport={{ once: false, amount: 0.3 }}
+-          transition={{ duration: 0.7, delay: 0.2 }}
+-          className="text-xl md:text-2xl font-bold text-white mb-4"
+-        >
+-          {text}
+-        </motion.p>
++        {text && (
++          <motion.p
++            initial={{ opacity: 0, y: 40 }}
++            whileInView={{ opacity: 1, y: 0 }}
++            viewport={{ once: false, amount: 0.3 }}
++            transition={{ duration: 0.7, delay: 0.2 }}
++            className="text-xl md:text-2xl font-bold text-white mb-4"
++          >
++            {text}
++          </motion.p>
++        )}
+ 
+         <motion.h1
+           initial={{ opacity: 0, y: 60 }}
+@@ -102,7 +108,8 @@ function Hero({
+         )}
+ 
+         {buttonText && (
+-          <motion.button
++          <Link href={buttonHref} className="inline-block">
++          <motion.span
+             initial={{ opacity: 0, scale: 0.7 }}
+             whileInView={{ opacity: 1 }}
+             viewport={{ once: false, amount: 0.3 }}
+@@ -113,10 +120,11 @@ function Hero({
+             }}
+             whileHover={{ scale: 1.08, y: -3 }}
+             whileTap={{ scale: 0.95 }}
+-            className="bg-yellow-400 text-black px-6 py-3 text-2xl rounded-full font-semibold hover:bg-yellow-300 transition cursor-pointer"
++            className="inline-block bg-yellow-400 text-black px-6 py-3 text-2xl rounded-full font-semibold hover:bg-yellow-300 transition cursor-pointer"
+           >
+             {buttonText}
+-          </motion.button>
++          </motion.span>
++          </Link>
+         )}
+ 
+       </div>
+diff --git a/src/components/ImpactSection.tsx b/src/components/ImpactSection.tsx
+index ffcff98..8ec3b2a 100644
+--- a/src/components/ImpactSection.tsx
++++ b/src/components/ImpactSection.tsx
+@@ -28,7 +28,7 @@ const stats: Stat[] = [
+   {
+     value: 0,
+     suffix: " frais",
+-    label: "l'accès à nos programmes est entièrement gratuit",
++    label: "l’accès à nos programmes est entièrement gratuit",
+   },
+ ];
+ 
+@@ -42,7 +42,7 @@ export default function StatsSection() {
+         </h2>
+ 
+         <p className="text-blue-800 mb-2">
+-          De l'idée à l'action !
++          De l’idée à l’action !
+         </p>
+ 
+         <p className="text-gray-600 mb-12">
+diff --git a/src/components/Navbar.tsx b/src/components/Navbar.tsx
+index 91fb4cb..fb75442 100644
+--- a/src/components/Navbar.tsx
++++ b/src/components/Navbar.tsx
+@@ -6,13 +6,23 @@ import Link from "next/link";
+ import { useState, memo } from "react";
+ import { usePathname } from "next/navigation";
+ 
++const mobileLinks = [
++  { label: "Accueil", href: "/" },
++  { label: "À propos", href: "/a-propos" },
++  { label: "Blog", href: "/actualites/blog" },
++  { label: "Évènements", href: "/actualites/evenements" },
++  { label: "Bibliothèque", href: "/actualites/bibliotheque" },
++  { label: "Projets", href: "/projets" },
++  { label: "Contacts", href: "/contacts" },
++];
++
+ function Navbar() {
+   const [isOpen, setIsOpen] = useState(false);
+-  const [openActualites, setOpenActualites] = useState(false);
+ 
+   const pathname = usePathname();
+ 
+-  const isActive = (path: string) => pathname === path;
++  const isActive = (path: string) =>
++    path === "/" ? pathname === "/" : pathname === path || pathname.startsWith(`${path}/`);
+ 
+   const isActualitesActive = pathname.startsWith("/actualites");
+ 
+@@ -24,14 +34,14 @@ function Navbar() {
+         <Link href="/" className="flex items-center gap-3">
+           <Image
+             src="/assets/logos/Logo.png"
+-            alt="Logo"
++            alt="Ensemble, on décolle"
+             width={100}
+             height={100}
+             priority
+           />
+ 
+           <p className="block md:hidden lg:block text-sm font-semibold text-black">
+-            Unis pour servir, déterminé pour servir
++            Unis pour servir, déterminés pour servir
+           </p>
+         </Link>
+ 
+@@ -163,8 +173,11 @@ function Navbar() {
+ 
+         {/* Mobile Button */}
+         <button
++          type="button"
+           onClick={() => setIsOpen(!isOpen)}
+           className="md:hidden text-blue-900"
++          aria-label={isOpen ? "Fermer le menu" : "Ouvrir le menu"}
++          aria-expanded={isOpen}
+         >
+           {isOpen ? <X size={28} /> : <Menu size={28} />}
+         </button>
+@@ -173,24 +186,35 @@ function Navbar() {
+ 
+       {/* Mobile Menu */}
+       {isOpen && (
+-        <div className="fixed inset-0 z-40 bg-black/40 md:hidden">
++        <div
++          className="fixed inset-0 z-40 bg-black/40 md:hidden"
++          onClick={() => setIsOpen(false)}
++        >
+ 
+-          <div className="absolute right-0 top-0 w-72 h-full bg-yellow-400 shadow-2xl p-6 flex flex-col gap-6">
++          <div
++            className="absolute right-0 top-0 w-72 h-full bg-yellow-400 shadow-2xl p-6 flex flex-col gap-6 overflow-y-auto"
++            onClick={(e) => e.stopPropagation()}
++          >
+ 
+             <button
++              type="button"
+               onClick={() => setIsOpen(false)}
+               className="self-end text-black"
++              aria-label="Fermer le menu"
+             >
+               <X size={26} />
+             </button>
+ 
+-            <Link
+-              href="/"
+-              onClick={() => setIsOpen(false)}
+-              className={isActive("/") ? "font-bold text-blue-900" : "text-blue-800"}
+-            >
+-              Accueil
+-            </Link>
++            {mobileLinks.map((link) => (
++              <Link
++                key={link.href}
++                href={link.href}
++                onClick={() => setIsOpen(false)}
++                className={isActive(link.href) ? "font-bold text-blue-900" : "text-blue-800"}
++              >
++                {link.label}
++              </Link>
++            ))}
+ 
+           </div>
+         </div>
+diff --git a/src/components/Objectif.tsx b/src/components/Objectif.tsx
+index e0488b3..d82bae4 100644
+--- a/src/components/Objectif.tsx
++++ b/src/components/Objectif.tsx
+@@ -1,4 +1,5 @@
+ import Image from "next/image";
++import Link from "next/link";
+ 
+ export default function Objectif() {
+   return (
+@@ -37,11 +38,12 @@ export default function Objectif() {
+             d’entraide et d’opportunités.
+           </p>
+ 
+-          <a href="/a-propos">
+-            <button className="bg-yellow-400 text-black px-6 py-3 rounded-full font-semibold hover:bg-yellow-300 transition cursor-pointer">
+-              EN SAVOIR PLUS
+-            </button>
+-          </a>
++          <Link
++            href="/a-propos"
++            className="inline-block bg-yellow-400 text-black px-6 py-3 rounded-full font-semibold hover:bg-yellow-300 transition cursor-pointer"
++          >
++            EN SAVOIR PLUS
++          </Link>
+         </div>
+ 
+       </div>
+diff --git a/src/components/ProjetCard.tsx b/src/components/ProjetCard.tsx
+index b1b4ec0..3cff0d2 100644
+--- a/src/components/ProjetCard.tsx
++++ b/src/components/ProjetCard.tsx
+@@ -36,6 +36,7 @@ export default function ProjectCard({
+             src={image}
+             alt={title || "image projet"}
+             fill
++            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+             className="object-cover"
+           />
+         </div>
+@@ -62,10 +63,11 @@ export default function ProjectCard({
+         )}
+ 
+         {id && (
+-          <Link href={`/projets/${id}`}>
+-            <button className="bg-yellow-400 text-black px-4 py-2 rounded-full text-sm font-semibold hover:bg-yellow-300 transition cursor-pointer">
+-              Voir le projet
+-            </button>
++          <Link
++            href={`/projets/${id}`}
++            className="inline-block bg-yellow-400 text-black px-4 py-2 rounded-full text-sm font-semibold hover:bg-yellow-300 transition cursor-pointer"
++          >
++            Voir le projet
+           </Link>
+         )}
+       </div>
+diff --git a/src/components/Services.tsx b/src/components/Services.tsx
+deleted file mode 100644
+index e69de29..0000000
+diff --git a/src/components/Testimonials.tsx b/src/components/Testimonials.tsx
+deleted file mode 100644
+index e69de29..0000000
+diff --git a/src/components/analytic.tsx b/src/components/analytic.tsx
+index 6990bea..eefbe9f 100644
+--- a/src/components/analytic.tsx
++++ b/src/components/analytic.tsx
+@@ -1,9 +1,19 @@
+ "use client";
+ 
++import { Suspense } from "react";
+ import usePageTracking from "@/src/app/usePageTracking";
+ 
+-export default function Analytics() {
++function PageTracker() {
+   usePageTracking();
+-
+   return null;
+-}
+\ No newline at end of file
++}
++
++// useSearchParams() doit être rendu dans un <Suspense>, sinon `next build`
++// échoue sur les pages statiques (missing-suspense-with-csr-bailout).
++export default function Analytics() {
++  return (
++    <Suspense fallback={null}>
++      <PageTracker />
++    </Suspense>
++  );
++}
+diff --git a/src/components/biblio.tsx b/src/components/biblio.tsx
+index aadbb50..5419085 100644
+--- a/src/components/biblio.tsx
++++ b/src/components/biblio.tsx
+@@ -27,7 +27,7 @@ export default function BiblioText({ title, paragraph }: Props) {
+                   sm:grid-cols-2 
+                   gap-10
+                 ">
+-                  {biblioTextData.map((bibliotext, index) => (
++                  {biblioTextData.map((bibliotext) => (
+                     <BiblioCard key={bibliotext.title} 
+                     image={bibliotext.image}
+                     title={bibliotext.title}
+diff --git a/src/components/blogCard.tsx b/src/components/blogCard.tsx
+index ca342e7..8e7cda8 100644
+--- a/src/components/blogCard.tsx
++++ b/src/components/blogCard.tsx
+@@ -1,7 +1,7 @@
++import Image from "next/image";
+ import Link from "next/link";
+ import { MoveRight } from 'lucide-react';
+ 
+-
+ type Props = {
+   slug: string;
+   image: string;
+@@ -17,17 +17,18 @@ export default function BlogCard({
+   title,
+   description,
+   category,
+-  date,
+ }: Props) {
+   return (
+     <div className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition duration-300 flex flex-col h-full">
+ 
+       {/* IMAGE ZOOM */}
+-      <div className="overflow-hidden h-52">
+-        <img
++      <div className="relative overflow-hidden h-52">
++        <Image
+           src={image}
+           alt={title}
+-          className="w-full h-full object-cover transform hover:scale-110 transition duration-500"
++          fill
++          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
++          className="object-cover transform hover:scale-110 transition duration-500"
+         />
+       </div>
+ 
+diff --git a/src/components/btnCard.tsx b/src/components/btnCard.tsx
+index 8ee0152..e6cbea5 100644
+--- a/src/components/btnCard.tsx
++++ b/src/components/btnCard.tsx
+@@ -1,12 +1,18 @@
++import Link from "next/link";
++
+ export function BtnCard({
+   text,
++  href = "/contacts",
+ }: {
+   text: string;
++  href?: string;
+ }) {
+   return (
+     <div>
+-      <button
++      <Link
++        href={href}
+         className="
++          inline-block
+           bg-yellow-400 
+           text-gray-800 
+           font-semibold 
+@@ -14,29 +20,23 @@ export function BtnCard({
+           md:rounded-full 
+           sm:rounded-md
+           cursor-pointer
+-          
+           px-4 py-2 
+           sm:px-3 sm:py-2.5 
+           md:px-6 md:py-3
+-          
+           text-sm 
+           sm:text-base 
+           md:text-md
+-          
+           hover:bg-yellow-300 
+           transition
+-          
+           mt-2 sm:mt-4 md:mt-16
+           mb-2 sm:mb-4 md:mb-20
+-
+           active:scale-95
+-
+           shadow-md hover:shadow-lg
+           scale-100 hover:scale-105
+         "
+       >
+         {text}
+-      </button>
++      </Link>
+     </div>
+   );
+-}
+\ No newline at end of file
++}
+diff --git a/src/components/contact.tsx b/src/components/contact.tsx
+index a97392e..b1e2685 100644
+--- a/src/components/contact.tsx
++++ b/src/components/contact.tsx
+@@ -5,40 +5,57 @@ import { motion } from "framer-motion";
+ 
+ import CustomSelect from "./departement";
+ import AutoTextarea from "./textarea";
++import { siteConfig } from "@/src/config/site";
++
++type FormState = {
++  prenoms: string;
++  nom: string;
++  email: string;
++  objet: string;
++  message: string;
++  pays: string;
++  departement: string;
++  isInBenin: string;
++};
+ 
+-const fadeUp = {
+-  hidden: { opacity: 0, y: 40 },
+-  show: { opacity: 1, y: 0 },
++type FormErrors = Partial<Record<keyof FormState, string>>;
++
++const EMPTY_FORM: FormState = {
++  prenoms: "",
++  nom: "",
++  email: "",
++  objet: "",
++  message: "",
++  pays: "",
++  departement: "",
++  isInBenin: "",
+ };
+ 
++const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
++
+ export default function ContactSection() {
+-  const [form, setForm] = useState({
+-    prenoms: "",
+-    nom: "",
+-    email: "",
+-    objet: "",
+-    message: "",
+-    pays: "",
+-    departement: "",
+-    isInBenin: "",
+-  });
+-
+-  const [errors, setErrors] = useState<any>({});
++  const [form, setForm] = useState<FormState>(EMPTY_FORM);
++  const [errors, setErrors] = useState<FormErrors>({});
+   const [loading, setLoading] = useState(false);
+   const [success, setSuccess] = useState(false);
+-
+-  const handleChange = (e: any) => {
+-    setForm({ ...form, [e.target.name]: e.target.value });
++  const [submitError, setSubmitError] = useState("");
++
++  const handleChange = (
++    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
++  ) => {
++    const { name, value } = e.target;
++    setForm((prev) => ({ ...prev, [name]: value }));
++    setSuccess(false);
+   };
+ 
+   const validate = () => {
+-    let newErrors: any = {};
++    const newErrors: FormErrors = {};
+ 
+-    if (!form.prenoms) newErrors.prenoms = "Prénoms requis";
+-    if (!form.nom) newErrors.nom = "Nom requis";
+-    if (!form.email.includes("@")) newErrors.email = "Email invalide";
+-    if (!form.objet) newErrors.objet = "Objet requis";
+-    if (!form.message) newErrors.message = "Message requis";
++    if (!form.prenoms.trim()) newErrors.prenoms = "Prénoms requis";
++    if (!form.nom.trim()) newErrors.nom = "Nom requis";
++    if (!EMAIL_REGEX.test(form.email.trim())) newErrors.email = "Email invalide";
++    if (!form.objet.trim()) newErrors.objet = "Objet requis";
++    if (!form.message.trim()) newErrors.message = "Message requis";
+ 
+     if (form.isInBenin === "oui" && !form.departement) {
+       newErrors.departement = "Département requis";
+@@ -52,8 +69,10 @@ export default function ContactSection() {
+     return Object.keys(newErrors).length === 0;
+   };
+ 
+-  const handleSubmit = async (e: any) => {
++  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+     e.preventDefault();
++    setSubmitError("");
++    setSuccess(false);
+     if (!validate()) return;
+ 
+     try {
+@@ -67,17 +86,18 @@ export default function ContactSection() {
+ 
+       if (res.ok) {
+         setSuccess(true);
+-        setForm({
+-          prenoms: "",
+-          nom: "",
+-          email: "",
+-          objet: "",
+-          message: "",
+-          pays: "",
+-          departement: "",
+-          isInBenin: "",
+-        });
++        setForm(EMPTY_FORM);
++        setErrors({});
++      } else {
++        const data = await res.json().catch(() => null);
++        setSubmitError(
++          data?.error
++            ? `L'envoi a échoué : ${data.error}`
++            : "L'envoi a échoué. Veuillez réessayer plus tard."
++        );
+       }
++    } catch {
++      setSubmitError("Impossible de joindre le serveur. Vérifiez votre connexion.");
+     } finally {
+       setLoading(false);
+     }
+@@ -105,17 +125,21 @@ export default function ContactSection() {
+           <div className="space-y-6 text-gray-700">
+             <div>
+               <h3 className="font-semibold text-blue-900">Adresse</h3>
+-              <p>Cotonou - Fidjrossè (Bénin)</p>
++              <p>{siteConfig.contact.address}</p>
+             </div>
+ 
+             <div>
+               <h3 className="font-semibold text-blue-900">Email</h3>
+-              <p>contact@ondecolle.com</p>
++              <a href={`mailto:${siteConfig.contact.email}`} className="hover:underline">
++                {siteConfig.contact.email}
++              </a>
+             </div>
+ 
+             <div>
+-              <h3 className="font-semibold text-blue-900">Phone</h3>
+-              <p>+229 01 61 93 93 10</p>
++              <h3 className="font-semibold text-blue-900">Téléphone</h3>
++              <a href={`tel:${siteConfig.contact.phone.replace(/\s/g, "")}`} className="hover:underline">
++                {siteConfig.contact.phone}
++              </a>
+             </div>
+           </div>
+         </motion.div>
+@@ -128,7 +152,7 @@ export default function ContactSection() {
+           transition={{ duration: 0.7 }}
+           className="w-full lg:w-[60%] bg-white rounded-2xl shadow-xl p-6 sm:p-8"
+         >
+-          <form onSubmit={handleSubmit} className="space-y-5">
++          <form onSubmit={handleSubmit} noValidate className="space-y-5">
+ 
+             {/* Prénoms */}
+             <motion.input
+@@ -162,8 +186,10 @@ export default function ContactSection() {
+               name="email"
+               value={form.email}
+               onChange={handleChange}
++              type="email"
++              autoComplete="email"
+               placeholder="adresse@gmail.com"
+-              className="w-full border border-gray-200 rounded-lg px-4 py-3 text-sm outline-none transition focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 bg-white placeholder:text-gray-300 text-gray-500"
++              className={inputClass}
+             />
+             {errors.email && (
+               <p className="text-red-500 text-sm">{errors.email}</p>
+@@ -187,7 +213,7 @@ export default function ContactSection() {
+                 <CustomSelect
+                   value={form.departement}
+                   onChange={(value: string) =>
+-                    setForm({ ...form, departement: value })
++                    setForm((prev) => ({ ...prev, departement: value }))
+                   }
+                 />
+                 {errors.departement && (
+@@ -221,6 +247,9 @@ export default function ContactSection() {
+               placeholder="Objet"
+               className={inputClass}
+             />
++            {errors.objet && (
++              <p className="text-red-500 text-sm">{errors.objet}</p>
++            )}
+ 
+             {/* MESSAGE */}
+             <AutoTextarea
+@@ -228,6 +257,9 @@ export default function ContactSection() {
+               value={form.message}
+               onChange={handleChange}
+             />
++            {errors.message && (
++              <p className="text-red-500 text-sm">{errors.message}</p>
++            )}
+ 
+             {/* BUTTON */}
+             <motion.button
+@@ -245,16 +277,23 @@ export default function ContactSection() {
+                 transition
+                 shadow-md
+                 hover:shadow-xl
++                disabled:opacity-60
++                disabled:cursor-not-allowed
+               "
+             >
+               {loading ? "Envoi..." : "ENVOYER"}
+             </motion.button>
+ 
+             {success && (
+-              <p className="text-green-600 text-sm">
++              <p className="text-green-600 text-sm" role="status">
+                 Message envoyé avec succès
+               </p>
+             )}
++            {submitError && (
++              <p className="text-red-500 text-sm" role="alert">
++                {submitError}
++              </p>
++            )}
+           </form>
+         </motion.div>
+       </div>
+diff --git a/src/components/detailEvent.tsx b/src/components/detailEvent.tsx
+index 2ba7cd9..80424a0 100644
+--- a/src/components/detailEvent.tsx
++++ b/src/components/detailEvent.tsx
+@@ -6,7 +6,6 @@ import { motion } from "framer-motion";
+ import Image from "next/image";
+ import { X } from 'lucide-react';
+ 
+-
+ type Props = {
+   event: {
+     slug: string;
+@@ -80,8 +79,10 @@ const remaining = images.length - visibleCount;
+       >
+         <iframe
+           className="w-full h-full"
+-          src={`https://www.youtube.com/embed/${event.youtubeId}`}
++          src={`https://www.youtube-nocookie.com/embed/${event.youtubeId}`}
+           title={event.title}
++          loading="lazy"
++          allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+           allowFullScreen
+         />
+       </motion.div>
+@@ -115,21 +116,24 @@ const remaining = images.length - visibleCount;
+             transition={{ duration: 0.6 }}
+             className="text-2xl font-bold text-yellow-400 mb-6"
+           >
+-            Galerie photos de l'évènement
++            Galerie photos de l’évènement
+           </motion.h2>
+ 
+           {/* PREVIEW GRID */}
+           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+             {previewImages.map((img, index) => (
+-              <div
++              <button
++                type="button"
+                 key={index}
+                 onClick={() => setOpen(true)}
++                aria-label="Ouvrir la galerie"
+                 className="relative h-44 rounded-2xl overflow-hidden cursor-pointer group"
+               >
+                 <Image
+                   src={img}
+-                  alt={`gallery-${index}`}
++                  alt={`${event.title} — photo ${index + 1}`}
+                   fill
++                  sizes="(max-width: 768px) 50vw, 25vw"
+                   className="object-cover group-hover:scale-110 transition duration-500"
+                 />
+ 
+@@ -139,7 +143,7 @@ const remaining = images.length - visibleCount;
+                     +{remaining}
+                   </div>
+                 )}
+-              </div>
++              </button>
+             ))}
+           </div>
+           
+@@ -158,7 +162,9 @@ const remaining = images.length - visibleCount;
+ 
+             {/* CLOSE BUTTON */}
+             <button
++            type="button"
+             onClick={() => setOpen(false)}
++            aria-label="Fermer la galerie"
+             className="absolute top-3 right-3 bg-white text-black w-9 h-9 rounded-full flex items-center justify-center hover:scale-110 transition"
+           >
+             <X size={18} />
+@@ -173,8 +179,9 @@ const remaining = images.length - visibleCount;
+                 >
+                   <Image
+                     src={img}
+-                    alt={`gallery-${i}`}
++                    alt={`${event.title} — photo ${i + 1}`}
+                     fill
++                    sizes="(max-width: 768px) 50vw, 33vw"
+                     className="object-cover group-hover:scale-105 transition duration-500"
+                   />
+                 </div>
+diff --git a/src/components/projetDetail.tsx b/src/components/projetDetail.tsx
+index 4c7422a..9abf0c9 100644
+--- a/src/components/projetDetail.tsx
++++ b/src/components/projetDetail.tsx
+@@ -1,4 +1,4 @@
+-import React from "react";
++import Image from "next/image";
+ 
+ type Props = {
+   title: string;
+@@ -11,19 +11,23 @@ export default function ProjetDetail({ title, description, image }: Props) {
+     <div className="max-w-7xl mx-auto p-6">
+ 
+       {image && (
+-        <img
+-          src={image || "/assets/images/hero_image_home.jpg"}
+-          alt={title}
+-          className="w-full h-64 object-cover rounded-lg mb-6"
+-        />
++        <div className="relative w-full h-64 mb-6">
++          <Image
++            src={image}
++            alt={title}
++            fill
++            sizes="100vw"
++            className="object-cover rounded-lg"
++          />
++        </div>
+       )}
+ 
+-      <h1 className="text-2xl font-bold text-gray-800">
++      <h2 className="text-2xl font-bold text-gray-800">
+         {title}
+-      </h1>
++      </h2>
+ 
+-      <p className="text-gray-600 mt-4 leading-relaxed space-y-4 whitespace-pre-line">
+-        {description}
++      <p className="text-gray-600 mt-4 leading-relaxed whitespace-pre-line">
++        {description.trim()}
+       </p>
+ 
+     </div>
+diff --git a/src/components/videoSection.tsx b/src/components/videoSection.tsx
+index 7d32b75..2a816ea 100644
+--- a/src/components/videoSection.tsx
++++ b/src/components/videoSection.tsx
+@@ -1,6 +1,6 @@
+ 
+ 
+-export default function videoSection(){
++export default function VideoSection() {
+ 
+ return (
+ 
+@@ -14,9 +14,10 @@ return (
+     <div className="relative w-full h-[250px] md:h-[500px]">
+       <iframe
+         className="w-full h-full rounded-xl"
+-        src="https://www.youtube.com/embed/U_Fz2cmtqLQ?si=cJaCfRLfU6EZtt6B"
+-        title="YouTube video"
+-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
++        src="https://www.youtube-nocookie.com/embed/U_Fz2cmtqLQ"
++        title="Une de nos réalisations en vidéo"
++        loading="lazy"
++        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+         allowFullScreen
+       />
+     </div>
+diff --git a/src/config/site.ts b/src/config/site.ts
+new file mode 100644
+index 0000000..9dd4084
+--- /dev/null
++++ b/src/config/site.ts
+@@ -0,0 +1,42 @@
++// Configuration centrale du site : à modifier ici une seule fois
++// plutôt que dans chaque page.
++
++function resolveSiteUrl(): string {
++  if (process.env.NEXT_PUBLIC_SITE_URL) return process.env.NEXT_PUBLIC_SITE_URL;
++  // Fourni automatiquement par Vercel en production.
++  if (process.env.VERCEL_PROJECT_PRODUCTION_URL)
++    return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
++  return "http://localhost:3000";
++}
++
++export const siteConfig = {
++  name: "Fondation Habib",
++  movement: "Ensemble, on décolle",
++  url: resolveSiteUrl(),
++  description:
++    "Plateforme officielle de la Fondation Habib dédiée à la jeunesse, l’innovation et l’entrepreneuriat.",
++  ogImage: "/assets/images/team/team_image.jpg",
++  logo: "/assets/logos/logoo.png",
++  mission:
++    "Notre mission : détecter, accompagner et propulser la jeunesse africaine vers le succès.",
++  contact: {
++    email: "contact@ondecolle.com",
++    phone: "+229 01 61 93 93 10",
++    address: "Cotonou - Fidjrossè (Bénin)",
++  },
++  socials: {
++    facebook: "https://www.facebook.com/habib.aboukhedoud",
++    instagram: "https://www.instagram.com/habib_aboukhedoud",
++    linkedin: "https://www.linkedin.com/in/habib-aboukhedoud-b7044a186",
++    tiktok: "https://www.tiktok.com/@habibaboukhedoud",
++  },
++};
++
++export const navLinks = [
++  { label: "Bibliothèque", href: "/actualites/bibliotheque" },
++  { label: "Évènements", href: "/actualites/evenements" },
++  { label: "Projets", href: "/projets" },
++  { label: "Blog", href: "/actualites/blog" },
++  { label: "Contacts", href: "/contacts" },
++  { label: "À propos", href: "/a-propos" },
++];
+diff --git a/src/data/biblio.ts b/src/data/biblio.ts
+index 5159b85..d89d26c 100644
+--- a/src/data/biblio.ts
++++ b/src/data/biblio.ts
+@@ -14,7 +14,7 @@ export const biblioTextData: BiblioTextProps[] = [
+         lang: "fr",
+     },
+     {
+-        title: "MA PATH, MA FAITH, MY MISSION",
++        title: "MY PATH, MY FAITH, MY MISSION",
+         description: "My Path, My Faith, My Mission is a powerful call to African youth to believe in themselves, to act with discipline and faith, and to build the future without waiting for outside help. Through real-life stories and lessons drawn from his experience, Habib Aboukhedoud shows that success comes from rigor, hard work, and unity. He encourages young people to transform their talents into concrete actions and to serve their country with integrity. This book is both a testimony, a source of inspiration, and a guide for a generation determined to build the Africa of tomorrow.",
+         image: "/assets/images/bibli2.jpg",
+         file: "/assets/uploads/My-Path-My-Faith-My-Mission.pdf",
+diff --git a/src/data/event.ts b/src/data/event.ts
+index c555d61..78f562d 100644
+--- a/src/data/event.ts
++++ b/src/data/event.ts
+@@ -34,19 +34,19 @@ export const events: EventsData[] = [
+         "/assets/images/Porto/3.jpg",
+         "/assets/images/Porto/4.jpg",
+         "/assets/images/Porto/5.jpg",        
+-        "/assets/images/Porto/6.jpg",
+-        "/assets/images/Porto/7.jpg",
+-        "/assets/images/Porto/8.jpg",
+-        "/assets/images/Porto/9.jpg",
+-        "/assets/images/Porto/10.jpg",
+-        "/assets/images/Porto/11.jpg",
+-        "/assets/images/Porto/12.jpg",
+-        "/assets/images/Porto/13.jpg",
+-        "/assets/images/Porto/14.jpg",
+-        "/assets/images/Porto/15.jpg",
+-        "/assets/images/Porto/16.jpg",
+-        "/assets/images/Porto/17.jpg",
+-        "/assets/images/Porto/18.jpg",
++        "/assets/images/Porto/6.JPG",
++        "/assets/images/Porto/7.JPG",
++        "/assets/images/Porto/8.JPG",
++        "/assets/images/Porto/9.JPG",
++        "/assets/images/Porto/10.JPG",
++        "/assets/images/Porto/11.JPG",
++        "/assets/images/Porto/12.JPG",
++        "/assets/images/Porto/13.JPG",
++        "/assets/images/Porto/14.JPG",
++        "/assets/images/Porto/15.JPG",
++        "/assets/images/Porto/16.JPG",
++        "/assets/images/Porto/17.JPG",
++        "/assets/images/Porto/18.JPG",
+       ],
+     statNumber: +300,
+     },
+@@ -202,7 +202,6 @@ Un thème puissant et fédérateur
+ 
+ Un format gratuit et accessible.
+ 
+-
+ L’entrée libre a constitué un choix stratégique majeur. En levant la barrière financière souvent dissuasive, les organisateurs ont ouvert les portes à tous, sans distinction de moyens. Cette gratuité totale a permis à des milliers de jeunes, y compris ceux en situation précaire, de participer à un événement de cette envergure. Le choix d’un amphithéâtre universitaire, l’amphithéâtre Idriss Déby Itno, a également permis d’offrir un cadre confortable et prestigieux, capable d’accueillir dignement un large public. L’accessibilité n’était pas seulement financière, mais aussi physique et symbolique.
+ 
+ Une dynamique de réseau inhabituelle
+diff --git a/src/global.d.ts b/src/global.d.ts
+index 6dcc4b6..f1ee726 100644
+--- a/src/global.d.ts
++++ b/src/global.d.ts
+@@ -1,7 +1,8 @@
+ declare global {
+   interface Window {
+-    gtag: (...args: any[]) => void;
++    dataLayer: unknown[];
++    gtag: (...args: unknown[]) => void;
+   }
+ }
+ 
+-export {};
+\ No newline at end of file
++export {};
+diff --git a/src/lib/data.ts b/src/lib/data.ts
+deleted file mode 100644
+index e69de29..0000000
+diff --git a/src/lib/gtag.ts b/src/lib/gtag.ts
+index c4e534b..a819f7c 100644
+--- a/src/lib/gtag.ts
++++ b/src/lib/gtag.ts
+@@ -1,17 +1,33 @@
+-export const GA_MEASUREMENT_ID = "G-XXXXXXXXXX";
++// Google Analytics 4 — configuration centralisée.
++// L'ID peut être surchargé via NEXT_PUBLIC_GA_ID (ex. pour un environnement de test).
++export const GA_MEASUREMENT_ID =
++  process.env.NEXT_PUBLIC_GA_ID || "G-QNVS3YYHHR";
+ 
+-// pageview
++// Envoie une page vue (navigation côté client).
+ export const pageview = (url: string) => {
+-  window.gtag("config", GA_MEASUREMENT_ID, {
++  if (typeof window === "undefined" || typeof window.gtag !== "function") return;
++
++  window.gtag("event", "page_view", {
+     page_path: url,
++    page_location: window.location.href,
++    page_title: document.title,
+   });
+ };
+ 
+-// event
+-export const event = ({ action, category, label, value }: any) => {
++type GtagEvent = {
++  action: string;
++  category?: string;
++  label?: string;
++  value?: number;
++};
++
++// Envoie un évènement personnalisé.
++export const event = ({ action, category, label, value }: GtagEvent) => {
++  if (typeof window === "undefined" || typeof window.gtag !== "function") return;
++
+   window.gtag("event", action, {
+     event_category: category,
+     event_label: label,
+     value,
+   });
+-};
+\ No newline at end of file
++};
+diff --git a/tsconfig.json b/tsconfig.json
+index 7797e0d..f20c2b8 100644
+--- a/tsconfig.json
++++ b/tsconfig.json
+@@ -1,40 +1,3 @@
+-// {
+-//   "compilerOptions": {
+-//     "target": "ES2017",
+-//     "lib": ["dom", "dom.iterable", "esnext"],
+-//     "allowJs": true,
+-//     "skipLibCheck": true,
+-//     "strict": true,
+-//     "noEmit": true,
+-//     "esModuleInterop": true,
+-//     "module": "esnext",
+-//     "moduleResolution": "bundler",
+-//     "resolveJsonModule": true,
+-//     "isolatedModules": true,
+-//     "jsx": "react-jsx",
+-//     "incremental": true,
+-//      "baseUrl": ".",
+-//     "paths": {
+-//       "@/*": ["./*"]
+-//     },
+-//     "ignoreDeprecations": "6.0",
+-//     "plugins": [
+-//       {
+-//         "name": "next"
+-//       }
+-//     ],
+-//   },
+-//   "include": [
+-//     "next-env.d.ts",
+-//     "**/*.ts",
+-//     "**/*.tsx",
+-//     ".next/types/**/*.ts",
+-//     ".next/dev/types/**/*.ts",
+-//     "**/*.mts"
+-// , "next.config.Ts"  ],
+-//   "exclude": ["node_modules"]
+-// }
+-
+ {
+   "compilerOptions": {
+     "target": "ES2017",
+@@ -61,12 +24,12 @@
+   },
+   "include": [
+     "next-env.d.ts",
++    "next.config.ts",
+     "**/*.ts",
+     "**/*.tsx",
+     ".next/types/**/*.ts",
+     ".next/dev/types/**/*.ts",
+-    "**/*.mts",
+-    "next.config.Ts"
++    "**/*.mts"
+   ],
+   "exclude": ["node_modules"]
+ }
+-- 
+2.43.0
+

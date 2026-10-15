@@ -1,36 +1,59 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Ensemble, on décolle — site web
 
-## Getting Started
+Site du mouvement citoyen **« Ensemble, on décolle »** (Fondation Habib), construit avec Next.js 16 (App Router), React 19, Tailwind CSS 4 et Framer Motion.
 
-First, run the development server:
+## Démarrage en local
 
 ```bash
+npm install
+cp .env.example .env.local   # puis renseigner les valeurs
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Ouvrir http://localhost:3000.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Commande        | Rôle                                   |
+| --------------- | -------------------------------------- |
+| `npm run dev`   | Serveur de développement (Turbopack)   |
+| `npm run build` | Build de production                    |
+| `npm run start` | Lance le build de production           |
+| `npm run lint`  | Vérifie le code avec ESLint            |
 
-## Learn More
+## Variables d'environnement
 
-To learn more about Next.js, take a look at the following resources:
+Voir `.env.example`.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| Variable               | Obligatoire | Description |
+| ---------------------- | ----------- | ----------- |
+| `EMAIL_USER`           | oui         | Compte Gmail qui envoie les messages du formulaire de contact |
+| `EMAIL_PASS`           | oui         | **Mot de passe d'application** Gmail (pas le mot de passe du compte) |
+| `EMAIL_RECEIVER`       | non         | Adresse qui reçoit les messages (défaut : `EMAIL_USER`) |
+| `NEXT_PUBLIC_SITE_URL` | recommandé  | URL publique du site, pour le SEO et les aperçus de partage |
+| `NEXT_PUBLIC_GA_ID`    | non         | ID Google Analytics 4 (défaut : `G-QNVS3YYHHR`) |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Déploiement (Vercel)
 
-## Deploy on Vercel
+1. Pousser le code sur GitHub (`main`).
+2. Sur https://vercel.com/new, importer le dépôt `DONGBETO/ondecolle` (framework détecté automatiquement : Next.js).
+3. Dans **Settings → Environment Variables**, ajouter les variables ci-dessus.
+4. Déployer. Chaque push sur `main` redéploie automatiquement.
+5. (Optionnel) **Settings → Domains** : ajouter le nom de domaine, puis mettre à jour `NEXT_PUBLIC_SITE_URL`.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Organisation
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```
+src/
+  app/          Pages (App Router) et route API /api/contact
+  components/   Composants d'interface
+  config/       site.ts — nom, URL, contacts, réseaux sociaux, liens du menu
+  data/         Contenu : articles, évènements, projets, bibliothèque, équipe
+  lib/          Google Analytics
+public/assets/  Images, logos et PDF
+design/         Fichiers sources de design (non publiés)
+```
+
+Pour ajouter un article, un évènement ou un projet, il suffit de modifier le fichier correspondant dans `src/data/`.
+
+> ⚠️ L'hébergement est sous Linux : les noms de fichiers sont **sensibles à la casse**. Un chemin `/assets/images/photo.jpg` ne trouvera pas `photo.JPG`.

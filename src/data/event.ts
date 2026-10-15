@@ -34,19 +34,19 @@ export const events: EventsData[] = [
         "/assets/images/Porto/3.jpg",
         "/assets/images/Porto/4.jpg",
         "/assets/images/Porto/5.jpg",        
-        "/assets/images/Porto/6.jpg",
-        "/assets/images/Porto/7.jpg",
-        "/assets/images/Porto/8.jpg",
-        "/assets/images/Porto/9.jpg",
-        "/assets/images/Porto/10.jpg",
-        "/assets/images/Porto/11.jpg",
-        "/assets/images/Porto/12.jpg",
-        "/assets/images/Porto/13.jpg",
-        "/assets/images/Porto/14.jpg",
-        "/assets/images/Porto/15.jpg",
-        "/assets/images/Porto/16.jpg",
-        "/assets/images/Porto/17.jpg",
-        "/assets/images/Porto/18.jpg",
+        "/assets/images/Porto/6.JPG",
+        "/assets/images/Porto/7.JPG",
+        "/assets/images/Porto/8.JPG",
+        "/assets/images/Porto/9.JPG",
+        "/assets/images/Porto/10.JPG",
+        "/assets/images/Porto/11.JPG",
+        "/assets/images/Porto/12.JPG",
+        "/assets/images/Porto/13.JPG",
+        "/assets/images/Porto/14.JPG",
+        "/assets/images/Porto/15.JPG",
+        "/assets/images/Porto/16.JPG",
+        "/assets/images/Porto/17.JPG",
+        "/assets/images/Porto/18.JPG",
       ],
     statNumber: +300,
     },
@@ -201,7 +201,6 @@ Un thème puissant et fédérateur
 ‘’Ensemble, on décolle’’. Mieux qu’on ne pouvait l’imaginer, ces quatre mots portent en eux une force mobilisatrice exceptionnelle. Ce slogan invite chacun à prendre les commandes de sa vie, à arrêter d’attendre que les solutions viennent d’ailleurs, à passer à l’action concrète. Dans un contexte où de nombreux jeunes béninois sont confrontés au chômage ou à l’absence de perspectives claires, ce message résonne avec une intensité particulière. Il ne s’agit pas d’un énième discours théorique, mais d’un appel vibrant à l’action, à la responsabilité individuelle et collective. Le thème parle directement aux aspirations profondes d’une génération qui veut prendre son destin en main.
 
 Un format gratuit et accessible.
-
 
 L’entrée libre a constitué un choix stratégique majeur. En levant la barrière financière souvent dissuasive, les organisateurs ont ouvert les portes à tous, sans distinction de moyens. Cette gratuité totale a permis à des milliers de jeunes, y compris ceux en situation précaire, de participer à un événement de cette envergure. Le choix d’un amphithéâtre universitaire, l’amphithéâtre Idriss Déby Itno, a également permis d’offrir un cadre confortable et prestigieux, capable d’accueillir dignement un large public. L’accessibilité n’était pas seulement financière, mais aussi physique et symbolique.
 

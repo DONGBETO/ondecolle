@@ -28,7 +28,7 @@ const stats: Stat[] = [
   {
     value: 0,
     suffix: " frais",
-    label: "l'accès à nos programmes est entièrement gratuit",
+    label: "l’accès à nos programmes est entièrement gratuit",
   },
 ];
 
@@ -42,7 +42,7 @@ export default function StatsSection() {
         </h2>
 
         <p className="text-blue-800 mb-2">
-          De l'idée à l'action !
+          De l’idée à l’action !
         </p>
 
         <p className="text-gray-600 mb-12">

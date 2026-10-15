@@ -6,7 +6,6 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import { X } from 'lucide-react';
 
-
 type Props = {
   event: {
     slug: string;
@@ -80,8 +79,10 @@ const remaining = images.length - visibleCount;
       >
         <iframe
           className="w-full h-full"
-          src={`https://www.youtube.com/embed/${event.youtubeId}`}
+          src={`https://www.youtube-nocookie.com/embed/${event.youtubeId}`}
           title={event.title}
+          loading="lazy"
+          allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
           allowFullScreen
         />
       </motion.div>
@@ -115,21 +116,24 @@ const remaining = images.length - visibleCount;
             transition={{ duration: 0.6 }}
             className="text-2xl font-bold text-yellow-400 mb-6"
           >
-            Galerie photos de l'évènement
+            Galerie photos de l’évènement
           </motion.h2>
 
           {/* PREVIEW GRID */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {previewImages.map((img, index) => (
-              <div
+              <button
+                type="button"
                 key={index}
                 onClick={() => setOpen(true)}
+                aria-label="Ouvrir la galerie"
                 className="relative h-44 rounded-2xl overflow-hidden cursor-pointer group"
               >
                 <Image
                   src={img}
-                  alt={`gallery-${index}`}
+                  alt={`${event.title} — photo ${index + 1}`}
                   fill
+                  sizes="(max-width: 768px) 50vw, 25vw"
                   className="object-cover group-hover:scale-110 transition duration-500"
                 />
 
@@ -139,7 +143,7 @@ const remaining = images.length - visibleCount;
                     +{remaining}
                   </div>
                 )}
-              </div>
+              </button>
             ))}
           </div>
           
@@ -158,7 +162,9 @@ const remaining = images.length - visibleCount;
 
             {/* CLOSE BUTTON */}
             <button
+            type="button"
             onClick={() => setOpen(false)}
+            aria-label="Fermer la galerie"
             className="absolute top-3 right-3 bg-white text-black w-9 h-9 rounded-full flex items-center justify-center hover:scale-110 transition"
           >
             <X size={18} />
@@ -173,8 +179,9 @@ const remaining = images.length - visibleCount;
                 >
                   <Image
                     src={img}
-                    alt={`gallery-${i}`}
+                    alt={`${event.title} — photo ${i + 1}`}
                     fill
+                    sizes="(max-width: 768px) 50vw, 33vw"
                     className="object-cover group-hover:scale-105 transition duration-500"
                   />
                 </div>

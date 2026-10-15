@@ -1,9 +1,10 @@
 import "./globals.css";
 import { Poppins } from "next/font/google";
-import Analytics from "@/src/components/analytic";
 import type { Metadata } from "next";
-import SEO from "@/src/config/next-seo.config";
 import Script from "next/script";
+import Analytics from "@/src/components/analytic";
+import { GA_MEASUREMENT_ID } from "@/src/lib/gtag";
+import { siteConfig } from "@/src/config/site";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -11,53 +12,40 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "Fondation Habib",
+  // Permet d'utiliser des chemins relatifs pour les images Open Graph / Twitter.
+  metadataBase: new URL(siteConfig.url),
 
-  description:
-    "Plateforme officielle de la Fondation Habib dédiée à la jeunesse, l’innovation et l’entrepreneuriat.",
+  title: {
+    default: siteConfig.name,
+    template: `%s | ${siteConfig.name}`,
+  },
 
-  keywords: [
-    "Fondation",
-    "Jeunesse",
-    "Entrepreneuriat",
-    "Bénin",
-  ],
+  description: siteConfig.description,
+
+  keywords: ["Fondation", "Jeunesse", "Entrepreneuriat", "Bénin", "Ensemble on décolle"],
 
   openGraph: {
-    title: "Fondation Habib",
-
-    description:
-      "Plateforme officielle de la Fondation Habib.",
-
-    url: "https://monsite.com",
-
-    siteName: "Fondation Habib",
-
+    title: siteConfig.name,
+    description: siteConfig.description,
+    url: "/",
+    siteName: siteConfig.name,
     images: [
       {
-        url: "/assets/images/cover.jpg",
-        width: 1200,
-        height: 630,
-        alt: "Fondation Habib",
+        url: siteConfig.ogImage,
+        alt: siteConfig.name,
       },
     ],
-
     locale: "fr_FR",
     type: "website",
   },
 
   twitter: {
     card: "summary_large_image",
-
-    title: "Fondation Habib",
-
-    description:
-      "Plateforme officielle de la Fondation Habib.",
-
-    images: ["/assets/images/cover.jpg"],
+    title: siteConfig.name,
+    description: siteConfig.description,
+    images: [siteConfig.ogImage],
   },
 };
-
 
 export default function RootLayout({
   children,
@@ -66,36 +54,25 @@ export default function RootLayout({
 }) {
   return (
     <html lang="fr">
-
-      <head>
-
-        {/* GOOGLE ANALYTICS SCRIPT */}
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-QNVS3YYHHR"></script>
-
-
-        {/* GOOGLE ANALYTICS CONFIG */}
+      <body className={poppins.className}>
+        {/* GOOGLE ANALYTICS */}
+        <Script
+          src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
+          strategy="afterInteractive"
+        />
         <Script id="google-analytics" strategy="afterInteractive">
           {`
             window.dataLayer = window.dataLayer || [];
-
-            function gtag(){
-              dataLayer.push(arguments);
-            }
-
+            function gtag(){ dataLayer.push(arguments); }
+            window.gtag = gtag;
             gtag('js', new Date());
-
-            gtag('config', 'G-QNVS3YYHHR');
+            gtag('config', '${GA_MEASUREMENT_ID}');
           `}
         </Script>
-
-      </head>
-
-      <body className={poppins.className}>
 
         <Analytics />
 
         {children}
-
       </body>
     </html>
   );
